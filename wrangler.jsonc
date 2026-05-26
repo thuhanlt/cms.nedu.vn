@@ -1,8 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nedu-cms",
-  "compatibility_date": "2025-01-01",
-  "main": "./dist/_worker.js",
+  "compatibility_date": "2026-04-01",
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application"
