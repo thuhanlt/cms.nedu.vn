@@ -1,0 +1,55 @@
+@import 'tailwindcss';
+
+:root {
+  /* Brand palette */
+  --navy: #1A4D6B;
+  --blue: #2D6A8C;
+  --blue-d: #1F5374;
+  --accent: #4ECDC4;
+  --tint: #E0EFF5;
+  --bg: #F7F8FA;
+  --ink: #111827;
+  --ink2: #374151;
+  --muted: #6B7280;
+  --faint: #9CA3AF;
+  --border: #E5E7EB;
+  --border2: #D1D5DB;
+  --green: #15803D;
+  --amber: #B45309;
+  --red: #DC2626;
+  --orange: #EA580C;
+  --challenge: #F5B419;
+
+  --font-body: 'Inter', 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Playfair Display', 'Inter', Georgia, serif;
+
+  color-scheme: light;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}

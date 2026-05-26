@@ -1,0 +1,236 @@
+import { useEffect, useMemo, useState } from 'react'
+import { format } from 'date-fns'
+import { Skeleton } from '@shared/components/Skeleton'
+import { EmptyState } from '@shared/components/EmptyState'
+import { SaveButton, type SaveState } from '@shared/components/SaveButton'
+import { toast } from '@shared/stores/useToastStore'
+import { useSiteSettings, useUpdateSiteSettings } from '../hooks/useSiteSettings'
+import type { SiteSettings } from '../types/settings'
+
+const inputClass =
+  'w-full px-3 py-2 rounded-md border border-[#D1D5DB] bg-white text-sm focus:outline-none focus:border-[#2D6A8C] focus:ring-1 focus:ring-[#2D6A8C]/20'
+
+const textareaClass = `${inputClass} resize-y min-h-[72px]`
+
+function safeDate(iso?: string): string {
+  if (!iso) return '—'
+  try {
+    return format(new Date(iso), "HH:mm 'ngày' dd/MM/yyyy")
+  } catch {
+    return '—'
+  }
+}
+
+export function SettingsPage() {
+  const { data: original, isLoading, isError, refetch } = useSiteSettings()
+  const update = useUpdateSiteSettings()
+  const [draft, setDraft] = useState<SiteSettings | null>(null)
+  const [saveState, setSaveState] = useState<SaveState>('idle')
+  const [savedAt, setSavedAt] = useState<Date | null>(null)
+
+  useEffect(() => {
+    if (original && !draft) setDraft(original)
+  }, [original, draft])
+
+  const dirty = useMemo(() => {
+    if (!draft || !original) return false
+    return JSON.stringify(draft) !== JSON.stringify(original)
+  }, [draft, original])
+
+  const onChange = (patch: Partial<SiteSettings>) => {
+    setDraft((d) => (d ? { ...d, ...patch } : d))
+    if (saveState === 'saved') setSaveState('idle')
+  }
+
+  const onSave = async () => {
+    if (!draft) return
+    setSaveState('saving')
+    try {
+      const saved = await update.mutateAsync(draft)
+      setDraft(saved)
+      setSavedAt(new Date())
+      setSaveState('saved')
+      toast.success('Đã lưu cài đặt site')
+    } catch {
+      setSaveState('error')
+      toast.error('Lưu thất bại — kiểm tra quyền admin')
+    }
+  }
+
+  if (isError) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto">
+        <div className="bg-white rounded-xl border border-[#E5E7EB]">
+          <EmptyState
+            title="Không tải được cài đặt"
+            description="Có thể do mất mạng hoặc quyền admin chưa được cấp."
+            action={
+              <button
+                onClick={() => refetch()}
+                className="px-4 py-2 rounded-lg bg-[#2D6A8C] hover:bg-[#1F5374] text-white text-sm font-medium"
+              >
+                Thử lại
+              </button>
+            }
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (isLoading || !draft) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto space-y-4">
+        <Skeleton height={32} width={200} />
+        <Skeleton height={200} />
+        <Skeleton height={160} />
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-6 max-w-3xl mx-auto">
+      <header className="flex items-start justify-between gap-4 mb-5">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#111827]" style={{ fontFamily: 'Playfair Display, serif' }}>
+            Cài đặt site
+          </h1>
+          <p className="text-sm text-[#6B7280] mt-1">
+            Nội dung hiển thị trên nedu.vn (thống kê + hero + CTA). Cập nhật lần cuối: {safeDate(draft.updatedAt)}
+          </p>
+        </div>
+        <SaveButton state={saveState} onClick={onSave} savedAt={savedAt} label="Lưu cài đặt" />
+      </header>
+
+      {dirty && (
+        <div className="mb-4 px-3 py-2 rounded-md bg-[#FEF3C7] text-[#B45309] text-xs">
+          Có thay đổi chưa lưu — đừng quên bấm "Lưu cài đặt".
+        </div>
+      )}
+
+      <div className="space-y-5">
+        {/* Thống kê & Hero */}
+        <Section title="Thống kê & Hero" description="Số liệu hiển thị ở hero trang chủ + nội dung headline.">
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Số học viên" hint="VD: 500+">
+              <input
+                className={inputClass}
+                value={draft.students}
+                onChange={(e) => onChange({ students: e.target.value })}
+              />
+            </Field>
+            <Field label="Số cohort" hint="VD: 12">
+              <input
+                className={inputClass}
+                value={draft.cohorts}
+                onChange={(e) => onChange({ cohorts: e.target.value })}
+              />
+            </Field>
+            <Field label="Đánh giá trung bình" hint="VD: 4.8/5">
+              <input
+                className={inputClass}
+                value={draft.avgRating}
+                onChange={(e) => onChange({ avgRating: e.target.value })}
+              />
+            </Field>
+            <Field label="Loại hình khoá học" hint="VD: 4 chương trình lớn">
+              <input
+                className={inputClass}
+                value={draft.courseTypes}
+                onChange={(e) => onChange({ courseTypes: e.target.value })}
+              />
+            </Field>
+          </div>
+
+          <Field label="Tiêu đề Hero (headline)" className="mt-4">
+            <input
+              className={inputClass}
+              value={draft.headline}
+              onChange={(e) => onChange({ headline: e.target.value })}
+              placeholder="VD: Giáo dục cho người trưởng thành"
+            />
+          </Field>
+
+          <Field label="Phụ đề Hero (subheadline)" className="mt-4">
+            <textarea
+              className={textareaClass}
+              value={draft.subheadline}
+              onChange={(e) => onChange({ subheadline: e.target.value })}
+              placeholder="Câu sub dưới headline"
+            />
+          </Field>
+        </Section>
+
+        {/* CTA & Playlist */}
+        <Section title="CTA & Playlist" description="Nút call-to-action chính + playlist review.">
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Nhãn nút CTA" hint="VD: Khám phá chương trình">
+              <input
+                className={inputClass}
+                value={draft.ctaLabel}
+                onChange={(e) => onChange({ ctaLabel: e.target.value })}
+              />
+            </Field>
+            <Field label="URL nút CTA" hint="Link nút CTA dẫn đến">
+              <input
+                className={inputClass}
+                value={draft.ctaUrl}
+                onChange={(e) => onChange({ ctaUrl: e.target.value })}
+                placeholder="https://nedu.vn/thu-thach"
+              />
+            </Field>
+          </div>
+
+          <Field label="YouTube Playlist Review" hint="Link playlist video đánh giá học viên" className="mt-4">
+            <input
+              className={inputClass}
+              value={draft.ytPlaylist}
+              onChange={(e) => onChange({ ytPlaylist: e.target.value })}
+              placeholder="https://www.youtube.com/playlist?list=..."
+            />
+          </Field>
+        </Section>
+      </div>
+    </div>
+  )
+}
+
+function Section({
+  title,
+  description,
+  children,
+}: {
+  title: string
+  description?: string
+  children: React.ReactNode
+}) {
+  return (
+    <section className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden">
+      <header className="px-5 py-3 border-b border-[#E5E7EB]">
+        <h2 className="text-sm font-semibold text-[#111827]">{title}</h2>
+        {description && <p className="text-xs text-[#6B7280] mt-0.5">{description}</p>}
+      </header>
+      <div className="p-5">{children}</div>
+    </section>
+  )
+}
+
+function Field({
+  label,
+  hint,
+  className = '',
+  children,
+}: {
+  label: string
+  hint?: string
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <label className={`block ${className}`}>
+      <div className="text-xs font-medium text-[#374151] mb-1.5">{label}</div>
+      {children}
+      {hint && <div className="text-[11px] text-[#9CA3AF] mt-1">{hint}</div>}
+    </label>
+  )
+}
