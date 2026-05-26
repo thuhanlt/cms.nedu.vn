@@ -628,6 +628,24 @@ VITE_GA4_ID=                                    # để trống = tắt
 VITE_CLARITY_ID=                                # để trống = tắt
 ```
 
+### Mock persona switching (dev)
+
+Khi `VITE_ENABLE_MOCKING=true`, mock `/auth/me` đọc current user qua thứ tự ưu tiên:
+
+1. Header `Authorization: Bearer mock_access_<uid>` (live login flow ở dev)
+2. Query `?token=mock_access_<uid>` (cho SSE/EventSource — không kèm header)
+3. `localStorage.mock_uid` (fallback khi reload tab)
+4. `DEFAULT_MOCK_UID = 'admin-1'`
+
+Switch persona nhanh:
+
+```js
+localStorage.setItem('mock_uid', 'editor-1'); location.reload()  // Biên tập viên
+localStorage.setItem('mock_uid', 'admin-1');  location.reload()  // Quản trị viên (default)
+```
+
+Editor click vào `/dashboard/test-config` hoặc `/dashboard/settings` → `AdminRoute` redirect về `/dashboard/overview` (xem §7.0 RoleGate).
+
 ---
 
 ## 12. Câu lệnh mở đầu cho Claude Code
