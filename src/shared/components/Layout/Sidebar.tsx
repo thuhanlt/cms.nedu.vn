@@ -115,11 +115,18 @@ export function Sidebar() {
       <div className="border-t border-[#E5E7EB] p-3">
         {!sidebarMini && user && (
           <div className="flex items-center gap-2 px-2 py-2">
-            <div className="w-8 h-8 rounded-full bg-[#E0EFF5] text-[#1A4D6B] flex items-center justify-center text-sm font-semibold">
-              {user.name.charAt(0)}
+            <div className="w-8 h-8 rounded-full bg-[#E0EFF5] text-[#1A4D6B] flex items-center justify-center text-sm font-semibold overflow-hidden">
+              {user.avatar_url ? (
+                <img src={user.avatar_url} alt={user.name || user.email} className="w-full h-full object-cover" />
+              ) : (
+                // Fallback chữ cái đầu — defensive với name/email undefined
+                ((user.name || user.email || 'U').charAt(0).toUpperCase())
+              )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-medium text-[#111827] truncate">{user.name}</div>
+              <div className="text-xs font-medium text-[#111827] truncate">
+                {user.name || user.email || 'Người dùng'}
+              </div>
               <div className="text-[10px] text-[#6B7280] capitalize">{user.role === 'admin' ? 'Quản trị viên' : 'Biên tập viên'}</div>
             </div>
           </div>

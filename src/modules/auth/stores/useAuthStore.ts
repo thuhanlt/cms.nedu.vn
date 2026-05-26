@@ -19,9 +19,14 @@ interface AuthState {
   logout: () => Promise<void>
 }
 
+// CMS portal dùng /api/cms/me (không phải /auth/me) — endpoint này:
+//   1. Verify Bearer JWT qua CentralAuthGuard
+//   2. Reject 403 NOT_A_CMS_MEMBER nếu user thiếu role cms_editor / cms_admin
+//   3. Trả shape { id, name, email, avatar_url, role } khớp với AuthUser
+// Xem nedu-backend/src/modules/cms/cms.controller.ts.
 async function fetchMe(): Promise<AuthUser | null> {
   try {
-    return await api.get<AuthUser>('/auth/me')
+    return await api.get<AuthUser>('/cms/me')
   } catch {
     return null
   }
