@@ -1,3 +1,9 @@
+# Single-package repo — `packages: ['.']` required từ pnpm v10 để satisfy
+# "packages field missing or empty" check (Cloudflare build dùng pnpm@10).
+# allowBuilds whitelist các native deps được phép chạy postinstall script.
+packages:
+  - '.'
+
 allowBuilds:
   esbuild: true
   msw: true
