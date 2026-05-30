@@ -7,6 +7,7 @@ import { alumniHandlers } from './alumni'
 import { reviewsHandlers } from './reviews'
 import { faqsHandlers } from './faqs'
 import { settingsHandlers } from './settings'
+import { notificationHandlers } from './notifications'
 
 export const handlers = [
   ...authHandlers,
@@ -18,4 +19,5 @@ export const handlers = [
   ...reviewsHandlers,
   ...faqsHandlers,
   ...settingsHandlers,
+  ...notificationHandlers,
 ]

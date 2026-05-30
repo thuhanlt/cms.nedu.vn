@@ -23,6 +23,7 @@ const AlumniListPage = lazy(() => import('@modules/alumni/pages/AlumniListPage')
 const ReviewListPage = lazy(() => import('@modules/reviews/pages/ReviewListPage').then((m) => ({ default: m.ReviewListPage })))
 const FaqListPage = lazy(() => import('@modules/faqs/pages/FaqListPage').then((m) => ({ default: m.FaqListPage })))
 const SettingsPage = lazy(() => import('@modules/settings/pages/SettingsPage').then((m) => ({ default: m.SettingsPage })))
+const NotificationConfigPage = lazy(() => import('@modules/notifications/pages/NotificationConfigPage').then((m) => ({ default: m.NotificationConfigPage })))
 
 function PageFallback() {
   return (
@@ -61,6 +62,7 @@ export function AppRouter() {
                 <Route element={<AdminRoute />}>
                   <Route path="test-config" element={<TestConfigPage />} />
                   <Route path="settings" element={<SettingsPage />} />
+                  <Route path="notifications" element={<NotificationConfigPage />} />
                 </Route>
               </Route>
             </Route>
