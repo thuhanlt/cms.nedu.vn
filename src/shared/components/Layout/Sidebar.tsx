@@ -15,6 +15,7 @@ import {
   Star,
   HelpCircle,
   Settings,
+  Bell,
   LogOut,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -48,6 +49,7 @@ const NAV_AFTER_PROGRAM: NavItem[] = [
   { to: '/dashboard/alumni', label: 'Alumni', icon: Award },
   { to: '/dashboard/reviews', label: 'Đánh giá', icon: Star },
   { to: '/dashboard/faqs', label: 'FAQ', icon: HelpCircle },
+  { to: '/dashboard/notifications', label: 'Thông báo', icon: Bell, adminOnly: true },
   { to: '/dashboard/settings', label: 'Cài đặt site', icon: Settings, adminOnly: true },
 ]
 
