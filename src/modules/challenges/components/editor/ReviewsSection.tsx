@@ -26,6 +26,7 @@ export function ReviewsSection({ content, onContentChange }: Props) {
               <div className="w-16 shrink-0">
                 <ImageUpload
                   ratio="avatar"
+                  kind="review-avatar"
                   value={r.avatarUrl || null}
                   onChange={(url) => patch({ avatarUrl: url ?? '' })}
                   fallbackLetter={r.avatarLetter || r.name.charAt(0).toUpperCase() || 'A'}

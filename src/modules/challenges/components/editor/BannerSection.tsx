@@ -47,6 +47,7 @@ export function BannerSection({ draft, onChange, onContentChange }: Props) {
       <Field label="Ảnh Banner — Desktop" hint="Tỉ lệ 1440×600. Để trống → giữ gradient mặc định.">
         <ImageUpload
           ratio="banner"
+          kind="challenge-banner"
           value={draft.content.heroImg || null}
           onChange={(url) => onContentChange({ heroImg: url ?? '' })}
         />
@@ -55,6 +56,7 @@ export function BannerSection({ draft, onChange, onContentChange }: Props) {
       <Field label="Ảnh Banner — Mobile" hint="Tỉ lệ 390×500. Để trống → giữ gradient mặc định.">
         <ImageUpload
           ratio="mobile"
+          kind="challenge-banner-mobile"
           value={draft.content.heroImgMobile || null}
           onChange={(url) => onContentChange({ heroImgMobile: url ?? '' })}
         />

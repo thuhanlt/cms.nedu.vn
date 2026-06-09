@@ -198,6 +198,7 @@ export function ArticleEditorPage() {
           <Section title="Ảnh bìa">
             <ImageUpload
               ratio="square"
+              kind="article-cover"
               value={draft.coverUrl || null}
               onChange={(url) => onChange({ coverUrl: url ?? '' })}
               hint="Click hoặc kéo-thả ảnh. Hiển thị ở list bài viết + khi chia sẻ MXH."
