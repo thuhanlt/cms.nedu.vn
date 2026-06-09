@@ -97,7 +97,7 @@ export function ChallengePreview({ draft, device, highlight }: Props) {
               <div key={i} className="rounded-xl border border-[#E5E7EB] p-4">
                 <div className="text-2xl mb-1.5">{o.icon}</div>
                 <h3 className="text-sm font-semibold mb-1">{o.title}</h3>
-                <p className="text-xs text-[#6B7280] leading-relaxed">{o.desc}</p>
+                <p className="text-xs text-[#6B7280] leading-relaxed whitespace-pre-line">{o.desc}</p>
               </div>
             ))}
           </div>
@@ -172,7 +172,7 @@ export function ChallengePreview({ draft, device, highlight }: Props) {
                   ))}
                 </div>
               )}
-              <p className="text-sm text-[#374151] mt-3 leading-relaxed">{c.instructor.bio}</p>
+              <p className="text-sm text-[#374151] mt-3 leading-relaxed whitespace-pre-line">{c.instructor.bio}</p>
               {c.instructor.highlights.filter(Boolean).length > 0 && (
                 <ul className="mt-3 space-y-1">
                   {c.instructor.highlights.filter(Boolean).map((h, i) => (
@@ -205,7 +205,7 @@ export function ChallengePreview({ draft, device, highlight }: Props) {
                     <Star key={k} size={12} className="fill-[#F5B419] text-[#F5B419]" />
                   ))}
                 </div>
-                <p className="text-xs text-[#374151] italic leading-relaxed mb-3">"{r.text}"</p>
+                <p className="text-xs text-[#374151] italic leading-relaxed mb-3 whitespace-pre-line">"{r.text}"</p>
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-[#E0EFF5] flex items-center justify-center text-xs font-semibold text-[#1F5374] overflow-hidden">
                     {r.avatarUrl ? (
@@ -329,7 +329,7 @@ function FaqRow({ faq }: { faq: { q: string; a: string } }) {
         <ChevronDown size={16} className={`text-[#6B7280] transition ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && faq.a && (
-        <div className="px-4 pb-3 text-xs text-[#374151] leading-relaxed">{faq.a}</div>
+        <div className="px-4 pb-3 text-xs text-[#374151] leading-relaxed whitespace-pre-line">{faq.a}</div>
       )}
     </div>
   )

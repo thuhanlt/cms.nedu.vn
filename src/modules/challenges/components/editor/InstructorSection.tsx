@@ -27,6 +27,7 @@ export function InstructorSection({ content, onContentChange }: Props) {
         <div className="w-32">
           <ImageUpload
             ratio="avatar"
+            kind="instructor-avatar"
             value={i.avatarUrl || null}
             onChange={(url) => update({ avatarUrl: url ?? '' })}
             fallbackLetter={i.avatarLetter || i.name.charAt(0).toUpperCase() || 'N'}
