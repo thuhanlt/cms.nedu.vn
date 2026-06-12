@@ -18,6 +18,7 @@ import {
   Bell,
   Mail,
   Workflow,
+  History,
   LogOut,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -54,10 +55,11 @@ const NAV_AFTER_PROGRAM: NavItem[] = [
   { to: '/dashboard/notifications', label: 'Thông báo', icon: Bell, adminOnly: true },
 ]
 
-// Nhóm "Tự động hoá" (admin-only) — sau này thêm "Lịch sử gửi".
+// Nhóm "Tự động hoá" (admin-only).
 const NAV_AUTOMATION_CHILDREN: NavItem[] = [
   { to: '/dashboard/email-templates', label: 'Mẫu email', icon: Mail },
   { to: '/dashboard/flows', label: 'Flows', icon: Workflow },
+  { to: '/dashboard/flows-history', label: 'Lịch sử gửi', icon: History },
 ]
 
 const NAV_FOOTER_ITEMS: NavItem[] = [
