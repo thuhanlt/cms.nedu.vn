@@ -6,6 +6,7 @@ import { SaveButton, type SaveState } from '@shared/components/SaveButton'
 import { Skeleton } from '@shared/components/Skeleton'
 import { EmptyState } from '@shared/components/EmptyState'
 import { toast } from '@shared/stores/useToastStore'
+import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard'
 import {
   useCreateEmailTemplate,
   useEmailTemplate,
@@ -73,6 +74,8 @@ export function EmailTemplateEditorPage() {
       draft.body_html !== detailQ.data.body_html
     )
   }, [draft, isNew, detailQ.data])
+
+  useUnsavedChangesGuard(dirty)
 
   if (!isNew && detailQ.isError) {
     return (
@@ -153,8 +156,10 @@ export function EmailTemplateEditorPage() {
     try {
       if (isNew) {
         const created = await create.mutateAsync(body)
-        // Cùng component cho /new và /:id/edit — state giữ nguyên qua navigate,
-        // set saved trước khi đổi route để toolbar hiện "Đã lưu lúc HH:MM".
+        // /new và /:id/edit render cùng component type ở cùng vị trí route —
+        // React KHÔNG remount khi navigate, nên draft/saveState/savedAt giữ
+        // nguyên và toolbar vẫn hiện "Đã lưu lúc HH:MM" sau khi đổi route
+        // (thứ tự set state / navigate không quan trọng).
         setDraft({ name: created.name, subject: created.subject, body_html: created.body_html })
         setSavedAt(new Date())
         setSaveState('saved')
@@ -211,10 +216,11 @@ export function EmailTemplateEditorPage() {
           <Section title="Thông tin mẫu">
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-[#374151] mb-1.5">
+                <label htmlFor="template-name" className="block text-xs font-medium text-[#374151] mb-1.5">
                   Tên mẫu <span className="text-[#DC2626]">*</span>
                 </label>
                 <input
+                  id="template-name"
                   className={`${inputClass} ${nameError ? 'border-[#DC2626]' : ''}`}
                   value={draft.name}
                   onChange={(e) => {
@@ -232,7 +238,7 @@ export function EmailTemplateEditorPage() {
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-medium text-[#374151]">
+                  <label htmlFor="template-subject" className="block text-xs font-medium text-[#374151]">
                     Subject <span className="text-[#DC2626]">*</span>
                   </label>
                   <span
@@ -242,6 +248,7 @@ export function EmailTemplateEditorPage() {
                   </span>
                 </div>
                 <input
+                  id="template-subject"
                   className={`${inputClass} ${subjectError ? 'border-[#DC2626]' : ''}`}
                   value={draft.subject}
                   onChange={(e) => {

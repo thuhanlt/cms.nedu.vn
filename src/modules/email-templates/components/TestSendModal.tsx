@@ -97,10 +97,11 @@ export function TestSendModal({ open, onClose, templateId, catalog }: TestSendMo
         </p>
 
         <div>
-          <label className="block text-xs font-medium text-[#374151] mb-1.5">
+          <label htmlFor="test-send-to" className="block text-xs font-medium text-[#374151] mb-1.5">
             Gửi tới email <span className="text-[#DC2626]">*</span>
           </label>
           <input
+            id="test-send-to"
             type="email"
             className={`${inputClass} ${toError ? 'border-[#DC2626]' : ''}`}
             value={to}
@@ -114,10 +115,10 @@ export function TestSendModal({ open, onClose, templateId, catalog }: TestSendMo
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-[#374151] mb-1.5">
+          <label htmlFor="test-send-event" className="block text-xs font-medium text-[#374151] mb-1.5">
             Render theo trigger (tuỳ chọn)
           </label>
-          <select className={inputClass} value={eventKey} onChange={(e) => setEventKey(e.target.value)}>
+          <select id="test-send-event" className={inputClass} value={eventKey} onChange={(e) => setEventKey(e.target.value)}>
             <option value="">Gộp biến mọi trigger</option>
             {catalog.map((t) => (
               <option key={t.event_key} value={t.event_key}>
