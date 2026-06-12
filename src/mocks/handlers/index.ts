@@ -8,6 +8,7 @@ import { reviewsHandlers } from './reviews'
 import { faqsHandlers } from './faqs'
 import { settingsHandlers } from './settings'
 import { notificationHandlers } from './notifications'
+import { emailTemplatesHandlers } from './email-templates'
 
 export const handlers = [
   ...authHandlers,
@@ -20,4 +21,5 @@ export const handlers = [
   ...faqsHandlers,
   ...settingsHandlers,
   ...notificationHandlers,
+  ...emailTemplatesHandlers,
 ]

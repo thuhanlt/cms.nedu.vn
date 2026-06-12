@@ -19,6 +19,15 @@ export function badRequest(message: string | string[] = 'Bad request') {
   return HttpResponse.json({ statusCode: 400, message, error: 'Bad Request' }, { status: 400 })
 }
 
+export function conflict(message = 'Conflict') {
+  return HttpResponse.json({ statusCode: 409, message, error: 'Conflict' }, { status: 409 })
+}
+
+// Match shape NestJS ThrottlerGuard (BE test-send 5 lần/phút)
+export function tooManyRequests(message = 'ThrottlerException: Too Many Requests') {
+  return HttpResponse.json({ statusCode: 429, message, error: 'Too Many Requests' }, { status: 429 })
+}
+
 export function serverError(message = 'Internal Server Error') {
   return HttpResponse.json({ statusCode: 500, message, error: 'Internal Server Error' }, { status: 500 })
 }

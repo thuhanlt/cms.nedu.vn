@@ -24,6 +24,8 @@ const ReviewListPage = lazy(() => import('@modules/reviews/pages/ReviewListPage'
 const FaqListPage = lazy(() => import('@modules/faqs/pages/FaqListPage').then((m) => ({ default: m.FaqListPage })))
 const SettingsPage = lazy(() => import('@modules/settings/pages/SettingsPage').then((m) => ({ default: m.SettingsPage })))
 const NotificationConfigPage = lazy(() => import('@modules/notifications/pages/NotificationConfigPage').then((m) => ({ default: m.NotificationConfigPage })))
+const EmailTemplateListPage = lazy(() => import('@modules/email-templates/pages/EmailTemplateListPage').then((m) => ({ default: m.EmailTemplateListPage })))
+const EmailTemplateEditorPage = lazy(() => import('@modules/email-templates/pages/EmailTemplateEditorPage').then((m) => ({ default: m.EmailTemplateEditorPage })))
 
 function PageFallback() {
   return (
@@ -63,6 +65,9 @@ export function AppRouter() {
                   <Route path="test-config" element={<TestConfigPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                   <Route path="notifications" element={<NotificationConfigPage />} />
+                  <Route path="email-templates" element={<EmailTemplateListPage />} />
+                  <Route path="email-templates/new" element={<EmailTemplateEditorPage />} />
+                  <Route path="email-templates/:id/edit" element={<EmailTemplateEditorPage />} />
                 </Route>
               </Route>
             </Route>
