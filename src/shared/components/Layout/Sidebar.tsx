@@ -16,6 +16,7 @@ import {
   HelpCircle,
   Settings,
   Bell,
+  Mail,
   LogOut,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -50,6 +51,14 @@ const NAV_AFTER_PROGRAM: NavItem[] = [
   { to: '/dashboard/reviews', label: 'Đánh giá', icon: Star },
   { to: '/dashboard/faqs', label: 'FAQ', icon: HelpCircle },
   { to: '/dashboard/notifications', label: 'Thông báo', icon: Bell, adminOnly: true },
+]
+
+// Nhóm "Tự động hoá" (admin-only) — sau này thêm "Workflow" + "Lịch sử gửi".
+const NAV_AUTOMATION_CHILDREN: NavItem[] = [
+  { to: '/dashboard/email-templates', label: 'Mẫu email', icon: Mail },
+]
+
+const NAV_FOOTER_ITEMS: NavItem[] = [
   { to: '/dashboard/settings', label: 'Cài đặt site', icon: Settings, adminOnly: true },
 ]
 
@@ -60,6 +69,7 @@ export function Sidebar() {
   const logout = useAuthStore((s) => s.logout)
   const isAdmin = user?.role === 'admin'
   const [programOpen, setProgramOpen] = useState(true)
+  const [automationOpen, setAutomationOpen] = useState(true)
 
   const width = sidebarMini ? 'w-[66px]' : 'w-[272px]'
 
@@ -109,6 +119,33 @@ export function Sidebar() {
         )}
 
         {NAV_AFTER_PROGRAM.filter((i) => !i.adminOnly || isAdmin).map((item) => (
+          <NavRow key={item.label} item={item} mini={sidebarMini} />
+        ))}
+
+        {/* Group: Tự động hoá (admin-only) */}
+        {isAdmin &&
+          (!sidebarMini ? (
+            <div>
+              <button
+                onClick={() => setAutomationOpen((o) => !o)}
+                className="w-full flex items-center justify-between px-4 py-2 text-xs uppercase tracking-wider text-[#6B7280] hover:text-[#111827]"
+              >
+                <span>Tự động hoá</span>
+                {automationOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              </button>
+              {automationOpen && (
+                <div>
+                  {NAV_AUTOMATION_CHILDREN.map((item) => (
+                    <NavRow key={item.label} item={item} mini={false} indent />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            NAV_AUTOMATION_CHILDREN.map((item) => <NavRow key={item.label} item={item} mini />)
+          ))}
+
+        {NAV_FOOTER_ITEMS.filter((i) => !i.adminOnly || isAdmin).map((item) => (
           <NavRow key={item.label} item={item} mini={sidebarMini} />
         ))}
       </nav>
