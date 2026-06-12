@@ -1,6 +1,7 @@
 // Seed mock cho module Mẫu email. Catalog mirror 1:1 nedu-backend
-// src/modules/email-workflow/trigger-catalog.ts (payment.paid + payment.failed)
-// — mock PHẢI khớp contract BE đã merge.
+// src/modules/email-workflow/trigger-catalog.ts — 4 trigger: payment.paid +
+// payment.failed (#198 merged) + enrollment.confirmed + hieucon.report.ready
+// (#199) — mock PHẢI khớp contract BE, FE không hardcode danh sách.
 import type { EmailTemplate, TriggerCatalogItem } from '@modules/email-templates/types/email-template'
 import { extractTemplateVars } from '@modules/email-templates/template-render'
 
@@ -29,6 +30,36 @@ export const EMAIL_TRIGGER_CATALOG: TriggerCatalogItem[] = [
       { key: 'buyer_email', label: 'Email người mua', sample: 'lan@gmail.com' },
       { key: 'buyer_phone', label: 'SĐT người mua', sample: '0901234567' },
       { key: 'failure_message', label: 'Lý do lỗi', sample: 'Thẻ bị từ chối' },
+      { key: 'order_id_short', label: 'Mã đơn (rút gọn)', sample: 'a1b2c3d4' },
+    ],
+  },
+  {
+    event_key: 'enrollment.confirmed',
+    label: 'Ghi danh thành công',
+    audience_label: 'Học viên',
+    recipient_context_key: 'student_email',
+    context_vars: [
+      { key: 'student_name', label: 'Tên học viên', sample: 'Chị Lan' },
+      { key: 'student_email', label: 'Email học viên', sample: 'lan@gmail.com' },
+      { key: 'course_name', label: 'Tên khoá / sản phẩm', sample: 'Là Chính Mình' },
+      { key: 'order_id_short', label: 'Mã đơn (rút gọn)', sample: 'a1b2c3d4' },
+    ],
+  },
+  {
+    event_key: 'hieucon.report.ready',
+    label: 'Báo cáo Thiên Mệnh sẵn sàng',
+    audience_label: 'Phụ huynh',
+    recipient_context_key: 'parent_email',
+    context_vars: [
+      { key: 'parent_name', label: 'Tên phụ huynh', sample: 'Chị Lan' },
+      { key: 'parent_email', label: 'Email phụ huynh', sample: 'lan@gmail.com' },
+      { key: 'child_name', label: 'Tên bé', sample: 'Bé Bi' },
+      { key: 'tier', label: 'Gói báo cáo', sample: 'premium' },
+      {
+        key: 'report_url',
+        label: 'Link xem báo cáo (hệ thống sinh)',
+        sample: 'https://report.hieucon.vn/r/abc123',
+      },
       { key: 'order_id_short', label: 'Mã đơn (rút gọn)', sample: 'a1b2c3d4' },
     ],
   },

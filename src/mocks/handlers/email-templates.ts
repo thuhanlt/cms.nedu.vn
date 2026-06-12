@@ -30,6 +30,12 @@ import type { EmailTemplate } from '@modules/email-templates/types/email-templat
 
 let templates: EmailTemplate[] = EMAIL_TEMPLATES_SEED.map((t) => ({ ...t }))
 
+/** Cho handlers/email-workflows.ts check "Mẫu email không tồn tại" trên store SỐNG
+ *  (template tạo trong phiên dùng được ngay trong workflow — như BE). */
+export function mockTemplateIdExists(id: string): boolean {
+  return templates.some((t) => t.id === id)
+}
+
 function requireAdmin(request: Request): Response | null {
   const uid = resolveMockUidFromRequest(request)
   if (!uid) return unauthorized()
