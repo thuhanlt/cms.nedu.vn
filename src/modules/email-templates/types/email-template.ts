@@ -37,7 +37,7 @@ export interface TriggerVar {
   sample: string
 }
 
-/** Entry GET /cms/email-workflows/trigger-catalog — audience khoá theo trigger. */
+/** Entry GET /cms/flows/trigger-catalog — audience khoá theo trigger. */
 export interface TriggerCatalogItem {
   event_key: string
   label: string

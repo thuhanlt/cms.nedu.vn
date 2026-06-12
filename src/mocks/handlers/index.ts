@@ -9,7 +9,7 @@ import { faqsHandlers } from './faqs'
 import { settingsHandlers } from './settings'
 import { notificationHandlers } from './notifications'
 import { emailTemplatesHandlers } from './email-templates'
-import { emailWorkflowsHandlers } from './email-workflows'
+import { flowsHandlers } from './flows'
 
 export const handlers = [
   ...authHandlers,
@@ -22,8 +22,8 @@ export const handlers = [
   ...faqsHandlers,
   ...settingsHandlers,
   ...notificationHandlers,
-  // email-templates TRƯỚC email-workflows: GET trigger-catalog (explicit path)
-  // phải match trước GET /cms/email-workflows/:id
+  // email-templates TRƯỚC flows: GET trigger-catalog (explicit path)
+  // phải match trước GET /cms/flows/:id
   ...emailTemplatesHandlers,
-  ...emailWorkflowsHandlers,
+  ...flowsHandlers,
 ]

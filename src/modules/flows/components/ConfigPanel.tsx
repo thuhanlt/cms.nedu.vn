@@ -1,6 +1,6 @@
 // Nội dung PANEL PHẢI của builder (mirror side panel Google Workspace Flows):
 // đổi theo thẻ đang chọn trên canvas — chọn starter / chi tiết starter /
-// config Gửi email / config Đợi / Thêm bước / thông báo read-only mốc ngày.
+// config Gửi email / config Đợi / Thêm node / thông báo read-only mốc ngày.
 // Logic field GIỮ NGUYÊN từ SendEmailFields/DelayFields cũ — chỉ đổi bố cục.
 import { Clock, ExternalLink, Mail, RefreshCw } from 'lucide-react'
 import {
@@ -8,7 +8,7 @@ import {
   WORKFLOW_MAX_STEPS,
   type EmailTemplateOption,
   type TriggerCatalogItem,
-} from '../types/email-workflow'
+} from '../types/flow'
 import { triggerClause, type BuilderStep, type DelayUnit } from './builder-steps'
 import { TriggerPicker } from './TriggerPicker'
 
@@ -16,14 +16,14 @@ const inputClass =
   'px-3 py-2 rounded-md border border-[#D1D5DB] bg-white text-sm focus:outline-none focus:border-[#2D6A8C] focus:ring-1 focus:ring-[#2D6A8C]/20'
 
 // Trigger nào KHÁCH đã tự động nhận 1 email giao dịch (biên nhận / báo cáo) —
-// nhắc admin để workflow là email CHĂM SÓC thêm, đừng lặp lại (NLH-NEDU-EMAIL-
-// WORKFLOW-001 §9.2). Tạm hardcode ở FE; sẽ chuyển sang catalog BG ở phase
-// System Templates (§9.3). Trigger không có trong map = không nhắc.
+// nhắc admin để node Gửi email là email CHĂM SÓC thêm, đừng lặp lại
+// (NLH-NEDU-FLOWS-001 §9.2). Tạm hardcode ở FE; sẽ chuyển sang catalog BG ở
+// phase System Templates (§9.3). Trigger không có trong map = không nhắc.
 const SYSTEM_EMAIL_NOTE: Record<string, string> = {
   'payment.paid':
-    'Khách đã tự động nhận biên nhận thanh toán. Workflow này là email CHĂM SÓC thêm (cảm ơn, hướng dẫn vào học…) — đừng lặp lại nội dung biên nhận.',
+    'Khách đã tự động nhận biên nhận thanh toán. Email này là email CHĂM SÓC thêm (cảm ơn, hướng dẫn vào học…) — đừng lặp lại nội dung biên nhận.',
   'hieucon.report.ready':
-    'Phụ huynh đã tự động nhận email báo cáo Thiên Mệnh. Workflow này là email CHĂM SÓC thêm — đừng lặp lại nội dung báo cáo.',
+    'Phụ huynh đã tự động nhận email báo cáo Thiên Mệnh. Email này là email CHĂM SÓC thêm — đừng lặp lại nội dung báo cáo.',
 }
 
 function PanelHeader({ kicker, title, sub }: { kicker?: string; title: string; sub?: string }) {
@@ -71,7 +71,7 @@ export function PanelStarterDetail({
 }) {
   return (
     <div>
-      <PanelHeader kicker="Bước 1 · Sự kiện bắt đầu" title={`Khi ${triggerClause(trigger.label)}`} />
+      <PanelHeader kicker="Node 1 · Sự kiện bắt đầu" title={`Khi ${triggerClause(trigger.label)}`} />
       <span className="inline-block text-[11px] px-2 py-1 rounded bg-[#E0EFF5] text-[#1F5374]">
         → gửi cho {trigger.audience_label}
       </span>
@@ -135,7 +135,7 @@ export function PanelSendEmail({
   const selected = templates.find((t) => t.id === step.template_id)
   return (
     <div>
-      <PanelHeader kicker={`Bước ${stepNumber}`} title="Gửi email" sub="Gửi 1 mẫu email đã soạn" />
+      <PanelHeader kicker={`Node ${stepNumber}`} title="Gửi email" sub="Gửi 1 mẫu email đã soạn" />
       <label htmlFor={selectId} className="block text-xs font-medium text-[#374151] mb-1.5">
         Mẫu email <span className="text-[#DC2626]">*</span>
       </label>
@@ -209,9 +209,9 @@ export function PanelDelay({
   return (
     <div>
       <PanelHeader
-        kicker={`Bước ${stepNumber}`}
+        kicker={`Node ${stepNumber}`}
         title="Đợi"
-        sub="Chờ một khoảng thời gian trước khi làm bước tiếp theo"
+        sub="Chờ một khoảng thời gian trước khi chạy node tiếp theo"
       />
       <div className="flex items-end gap-2">
         <div>
@@ -252,7 +252,7 @@ export function PanelDelay({
       ) : (
         <p className="text-[11px] text-[#6B7280] mt-1.5">
           Đợi {amount} {step.unit === 'days' ? 'ngày' : 'giờ'}
-          {step.unit === 'days' && ` (= ${hours} giờ)`} rồi mới chạy bước kế tiếp
+          {step.unit === 'days' && ` (= ${hours} giờ)`} rồi mới chạy node kế tiếp
         </p>
       )}
     </div>
@@ -270,10 +270,10 @@ export function PanelAddStep({
 }) {
   return (
     <div>
-      <PanelHeader title="Thêm bước" sub="Bước mới được thêm vào cuối luồng" />
+      <PanelHeader title="Thêm node" sub="Node mới được thêm vào cuối luồng" />
       {full && (
         <p className="text-xs text-[#B45309] mb-3">
-          Đã đạt tối đa {WORKFLOW_MAX_STEPS} bước — xoá bớt để thêm bước mới.
+          Đã đạt tối đa {WORKFLOW_MAX_STEPS} node — xoá bớt để thêm node mới.
         </p>
       )}
       <div className="space-y-3">
@@ -303,7 +303,7 @@ export function PanelAddStep({
           <span className="min-w-0">
             <span className="block text-sm font-medium text-[#111827]">Đợi</span>
             <span className="block text-xs text-[#6B7280] mt-0.5">
-              Chờ một khoảng thời gian trước khi làm bước tiếp theo
+              Chờ một khoảng thời gian trước khi chạy node tiếp theo
             </span>
           </span>
         </button>
@@ -328,7 +328,7 @@ export function PanelReadOnlyAnchor({
       <PanelHeader kicker="Luồng theo mốc ngày" title="Chỉ xem — chưa sửa được" />
       <div className="rounded-lg border border-[#FCE8C3] bg-[#FFFBEB] px-4 py-3 text-[13px] text-[#7C5E10] leading-relaxed">
         ⏱ Luồng này chạy theo <b>mốc ngày</b>: gửi {offsetLabel} so với <b>{anchorLabel}</b> (
-        {stepCount} bước). Trình soạn chưa hỗ trợ sửa loại luồng này — bản cập nhật sau sẽ mở. Cần
+        {stepCount} node). Trình soạn chưa hỗ trợ sửa loại luồng này — bản cập nhật sau sẽ mở. Cần
         thay đổi gấp, liên hệ kỹ thuật.
       </div>
     </div>

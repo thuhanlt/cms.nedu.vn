@@ -1,7 +1,7 @@
 // Logic thuần của builder step (UI state ↔ API shape) — tách khỏi component
 // canvas để redesign UI không đụng vào conversion/validate.
 // GIỮ NGUYÊN từ StepListEditor cũ: fromApiSteps / toApiSteps / new*Step.
-import { DELAY_HOURS_MAX, type WorkflowStep } from '../types/email-workflow'
+import { DELAY_HOURS_MAX, type WorkflowStep } from '../types/flow'
 
 /**
  * Label catalog ("Thanh toán thành công") → mệnh đề sau "Khi" ("thanh toán
@@ -48,16 +48,16 @@ export function toApiSteps(
     const s = steps[i]
     const pos = i + 1
     if (s.type === 'send_email') {
-      if (!s.template_id) return { ok: false, error: `Bước ${pos}: chưa chọn mẫu email` }
+      if (!s.template_id) return { ok: false, error: `Node ${pos}: chưa chọn mẫu email` }
       out.push({ type: 'send_email', template_id: s.template_id })
     } else {
       const amount = Number(s.amount)
       if (!Number.isInteger(amount) || amount < 1) {
-        return { ok: false, error: `Bước ${pos}: thời gian đợi phải là số nguyên ≥ 1` }
+        return { ok: false, error: `Node ${pos}: thời gian đợi phải là số nguyên ≥ 1` }
       }
       const hours = s.unit === 'days' ? amount * 24 : amount
       if (hours > DELAY_HOURS_MAX) {
-        return { ok: false, error: `Bước ${pos}: đợi tối đa ${DELAY_HOURS_MAX} giờ (90 ngày)` }
+        return { ok: false, error: `Node ${pos}: đợi tối đa ${DELAY_HOURS_MAX} giờ (90 ngày)` }
       }
       out.push({ type: 'delay', hours })
     }

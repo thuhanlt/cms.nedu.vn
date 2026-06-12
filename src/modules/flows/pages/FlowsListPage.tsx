@@ -1,4 +1,4 @@
-// List Workflow kiểu Google Workspace Flows: row card (icon + tên + subtitle
+// List Flows kiểu Google Workspace Flows: row card (icon + tên + subtitle
 // + status dot + kebab ⋮) thay cho DataTable. Logic toggle/delete/error
 // GIỮ NGUYÊN bản cũ; thêm "Tạo bản sao" (POST create mutation có sẵn).
 import { useMemo, useState } from 'react'
@@ -7,23 +7,22 @@ import { AlertCircle, Copy, History, Mail, Pencil, Play, Plus, Power, Timer, Tra
 import { ConfirmDialog } from '@shared/components/ConfirmDialog'
 import { EmptyState } from '@shared/components/EmptyState'
 import { Skeleton } from '@shared/components/Skeleton'
-import { SoonBadge } from '@shared/components/SoonBadge'
 import { toast } from '@shared/stores/useToastStore'
 import { ApiError } from '@shared/config/api-client'
 import {
-  useCreateWorkflow,
-  useDeleteWorkflow,
-  useEmailWorkflows,
-  useUpdateWorkflow,
-  useWorkflowTriggerCatalog,
-} from '../hooks/useEmailWorkflows'
+  useCreateFlow,
+  useDeleteFlow,
+  useFlows,
+  useUpdateFlow,
+  useFlowTriggerCatalog,
+} from '../hooks/useFlows'
 import { triggerClause } from '../components/builder-steps'
 import { KebabMenu } from '../components/KebabMenu'
 import {
   WORKFLOW_NAME_MAX,
   type EmailWorkflow,
   type WorkflowStatus,
-} from '../types/email-workflow'
+} from '../types/flow'
 
 // Status dot + label (mirror Active/Stopped của Google Flows)
 const STATUS_META: Record<WorkflowStatus, { label: string; color: string }> = {
@@ -32,16 +31,16 @@ const STATUS_META: Record<WorkflowStatus, { label: string; color: string }> = {
   disabled: { label: 'Đã tắt', color: '#B45309' },
 }
 
-export function WorkflowListPage() {
+export function FlowsListPage() {
   const navigate = useNavigate()
   const [confirmId, setConfirmId] = useState<string | null>(null)
 
-  const { data, isLoading, isError, refetch } = useEmailWorkflows()
+  const { data, isLoading, isError, refetch } = useFlows()
   const list = data ?? []
-  const catalogQ = useWorkflowTriggerCatalog()
-  const update = useUpdateWorkflow()
-  const remove = useDeleteWorkflow()
-  const create = useCreateWorkflow() // "Tạo bản sao" — POST cùng trigger+steps
+  const catalogQ = useFlowTriggerCatalog()
+  const update = useUpdateFlow()
+  const remove = useDeleteFlow()
+  const create = useCreateFlow() // "Tạo bản sao" — POST cùng trigger+steps
 
   // event_key → label tiếng Việt (fallback raw key khi catalog chưa có entry)
   const triggerLabels = useMemo(() => {
@@ -83,7 +82,7 @@ export function WorkflowListPage() {
       await remove.mutateAsync(confirmId)
       toast.success('Đã xoá luồng tự động')
     } catch (err) {
-      // 409 = workflow đang bật — message server hướng dẫn tắt trước khi xoá
+      // 409 = flow đang bật — message server hướng dẫn tắt trước khi xoá
       if (err instanceof ApiError && err.status === 409) {
         toast.error(err.message)
       } else {
@@ -93,10 +92,10 @@ export function WorkflowListPage() {
     setConfirmId(null)
   }
 
-  /** Subtitle gọn dưới tên: "Khi thanh toán thành công · 3 bước" / luồng mốc
-   *  ngày: "⏱ trước 3 ngày ngày khai giảng · 2 bước". */
+  /** Subtitle gọn dưới tên: "Khi thanh toán thành công · 3 node" / luồng mốc
+   *  ngày: "⏱ trước 3 ngày ngày khai giảng · 2 node". */
   const subtitle = (w: EmailWorkflow): string => {
-    const stepsLabel = `${w.steps.length} bước`
+    const stepsLabel = `${w.steps.length} node`
     if (w.trigger.type === 'date_anchor') {
       const anchorLabel =
         w.trigger.anchor_key === 'course_run.start_date'
@@ -120,19 +119,19 @@ export function WorkflowListPage() {
             className="text-2xl font-semibold text-[#111827]"
             style={{ fontFamily: 'Playfair Display, serif' }}
           >
-            Workflow
+            Flows
           </h1>
           <p className="text-sm text-[#6B7280] mt-1">
-            {list.length} luồng tự động · khi sự kiện xảy ra, hệ thống tự gửi email theo các bước
+            {list.length} luồng tự động · khi sự kiện xảy ra, hệ thống tự chạy các node
             bạn đặt sẵn
           </p>
         </div>
         <button
-          onClick={() => navigate('/dashboard/email-workflows/new')}
+          onClick={() => navigate('/dashboard/flows/new')}
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#2D6A8C] hover:bg-[#1F5374] text-white text-sm font-medium"
         >
           <Plus size={16} />
-          Workflow mới
+          Tạo luồng
         </button>
       </header>
 
@@ -162,14 +161,14 @@ export function WorkflowListPage() {
         <div className="bg-white rounded-xl border border-[#E5E7EB]">
           <EmptyState
             icon={<Mail size={22} />}
-            title="Chưa có workflow"
-            description='Bấm "Workflow mới" để tạo luồng tự động đầu tiên — vd: gửi email cảm ơn ngay sau khi khách thanh toán.'
+            title="Chưa có luồng nào"
+            description='Bấm "Tạo luồng" để tạo luồng tự động đầu tiên — vd: gửi email cảm ơn ngay sau khi khách thanh toán.'
             action={
               <button
-                onClick={() => navigate('/dashboard/email-workflows/new')}
+                onClick={() => navigate('/dashboard/flows/new')}
                 className="px-3 py-1.5 rounded-md bg-[#2D6A8C] hover:bg-[#1F5374] text-white text-xs font-medium"
               >
-                Workflow mới
+                Tạo luồng
               </button>
             }
           />
@@ -186,11 +185,11 @@ export function WorkflowListPage() {
                 role="button"
                 tabIndex={0}
                 aria-label={`Mở luồng ${w.name}`}
-                onClick={() => navigate(`/dashboard/email-workflows/${w.id}/edit`)}
+                onClick={() => navigate(`/dashboard/flows/${w.id}/edit`)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
-                    navigate(`/dashboard/email-workflows/${w.id}/edit`)
+                    navigate(`/dashboard/flows/${w.id}/edit`)
                   }
                 }}
                 className="flex items-center gap-3.5 rounded-2xl bg-[#F1F3F6] hover:bg-[#E9EDF2] px-4 py-3.5 cursor-pointer transition"
@@ -216,7 +215,7 @@ export function WorkflowListPage() {
                       key: 'edit',
                       label: 'Sửa',
                       icon: <Pencil size={14} />,
-                      onSelect: () => navigate(`/dashboard/email-workflows/${w.id}/edit`),
+                      onSelect: () => navigate(`/dashboard/flows/${w.id}/edit`),
                     },
                     {
                       key: 'duplicate',
@@ -231,8 +230,10 @@ export function WorkflowListPage() {
                       key: 'history',
                       label: 'Lịch sử',
                       icon: <History size={14} />,
-                      disabled: true, // trang CMS-3 sau
-                      badge: <SoonBadge />,
+                      onSelect: () =>
+                        navigate(
+                          `/dashboard/flows-history?tab=runs&workflow_id=${w.id}`,
+                        ),
                     },
                     'divider',
                     {

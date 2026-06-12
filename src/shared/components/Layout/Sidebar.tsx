@@ -57,7 +57,7 @@ const NAV_AFTER_PROGRAM: NavItem[] = [
 // Nhóm "Tự động hoá" (admin-only) — sau này thêm "Lịch sử gửi".
 const NAV_AUTOMATION_CHILDREN: NavItem[] = [
   { to: '/dashboard/email-templates', label: 'Mẫu email', icon: Mail },
-  { to: '/dashboard/email-workflows', label: 'Workflow', icon: Workflow },
+  { to: '/dashboard/flows', label: 'Flows', icon: Workflow },
 ]
 
 const NAV_FOOTER_ITEMS: NavItem[] = [

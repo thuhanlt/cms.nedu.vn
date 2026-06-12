@@ -1,10 +1,10 @@
-// Mock handlers cho Workflow — khớp contract nedu-backend
-// src/modules/email-workflow/workflows.controller.ts + workflows.service.ts (#198):
+// Mock handlers cho Flows — khớp contract nedu-backend
+// src/modules/flows/flows.controller.ts + flows.service.ts:
 //   - POST luôn tạo status 'draft' (bật qua PATCH sau khi soạn xong)
 //   - PATCH: trạng thái hiệu lực 'enabled' → validate enable THẬT
 //     (≥1 step, ≥1 send_email, template tồn tại) — message giống BE
-//   - DELETE 409 khi workflow đang bật
-//   - trigger/steps validate shape (mirror zod workflow.types.ts)
+//   - DELETE 409 khi flow đang bật
+//   - trigger/steps validate shape (mirror zod flow.types.ts)
 // Auth-aware: thiếu token → 401; role != admin → 403.
 // (Endpoint GET trigger-catalog nằm ở handlers/email-templates.ts — chung route.)
 import { http } from 'msw'
@@ -18,7 +18,7 @@ import {
   resolveMockUidFromRequest,
 } from '../config'
 import { MOCK_USERS } from '../data/users'
-import { EMAIL_WORKFLOWS_SEED } from '../data/email-workflows'
+import { FLOWS_SEED } from '../data/flows'
 import { EMAIL_TRIGGER_CATALOG } from '../data/email-templates'
 import { mockTemplateIdExists } from './email-templates'
 import type {
@@ -26,9 +26,9 @@ import type {
   WorkflowStatus,
   WorkflowStep,
   WorkflowTrigger,
-} from '@modules/email-workflows/types/email-workflow'
+} from '@modules/flows/types/flow'
 
-const workflows: EmailWorkflow[] = EMAIL_WORKFLOWS_SEED.map((w) => ({
+const workflows: EmailWorkflow[] = FLOWS_SEED.map((w) => ({
   ...w,
   trigger: { ...w.trigger },
   steps: w.steps.map((s) => ({ ...s })),
@@ -39,7 +39,7 @@ function requireAdmin(request: Request): Response | null {
   if (!uid) return unauthorized()
   const user = MOCK_USERS[uid]
   if (!user) return unauthorized('Mock user not found')
-  if (user.role !== 'admin') return forbidden('Chỉ Quản trị viên truy cập được Workflow')
+  if (user.role !== 'admin') return forbidden('Chỉ Quản trị viên truy cập được Flows')
   return null
 }
 
@@ -75,7 +75,7 @@ function parseSteps(value: unknown): ParseResult<WorkflowStep[]> {
     return { ok: false, response: badRequest('steps không hợp lệ: phải là mảng') }
   }
   if (value.length > MAX_STEPS) {
-    return { ok: false, response: badRequest(`steps không hợp lệ: tối đa ${MAX_STEPS} bước`) }
+    return { ok: false, response: badRequest(`steps không hợp lệ: tối đa ${MAX_STEPS} node`) }
   }
   const out: WorkflowStep[] = []
   for (let i = 0; i < value.length; i++) {
@@ -110,7 +110,7 @@ function parseSteps(value: unknown): ParseResult<WorkflowStep[]> {
 // Mirror BE assertEnableable — message GIỐNG BE từng chữ
 function assertEnableable(steps: WorkflowStep[]): Response | null {
   if (steps.length === 0) {
-    return badRequest('Workflow rỗng — thêm step trước khi bật')
+    return badRequest('Flow rỗng — thêm node trước khi bật')
   }
   const templateIds = [
     ...new Set(
@@ -120,7 +120,7 @@ function assertEnableable(steps: WorkflowStep[]): Response | null {
     ),
   ]
   if (templateIds.length === 0) {
-    return badRequest('Workflow chưa có step gửi email — thêm send_email trước khi bật')
+    return badRequest('Flow chưa có node gửi email — thêm send_email trước khi bật')
   }
   const missing = templateIds.filter((tid) => !mockTemplateIdExists(tid))
   if (missing.length > 0) {
@@ -129,25 +129,25 @@ function assertEnableable(steps: WorkflowStep[]): Response | null {
   return null
 }
 
-export const emailWorkflowsHandlers = [
-  http.get('*/api/cms/email-workflows', ({ request }) => {
+export const flowsHandlers = [
+  http.get('*/api/cms/flows', ({ request }) => {
     const gate = requireAdmin(request)
     if (gate) return gate
     const list = [...workflows].sort((a, b) => b.updated_at.localeCompare(a.updated_at))
     return ok(list as unknown as Record<string, unknown>[])
   }),
 
-  http.get('*/api/cms/email-workflows/:id', ({ params, request }) => {
+  http.get('*/api/cms/flows/:id', ({ params, request }) => {
     const gate = requireAdmin(request)
     if (gate) return gate
     // GET trigger-catalog match handler explicit ở handlers/email-templates.ts
     // TRƯỚC (thứ tự trong handlers/index.ts) — ở đây chỉ còn :id thật.
     const wf = workflows.find((w) => w.id === String(params.id))
-    if (!wf) return notFound('Workflow không tồn tại')
+    if (!wf) return notFound('Flow không tồn tại')
     return ok(wf as unknown as Record<string, unknown>)
   }),
 
-  http.post('*/api/cms/email-workflows', async ({ request }) => {
+  http.post('*/api/cms/flows', async ({ request }) => {
     const gate = requireAdmin(request)
     if (gate) return gate
     const body = (await request.json().catch(() => ({}))) as {
@@ -180,11 +180,11 @@ export const emailWorkflowsHandlers = [
     return ok(row as unknown as Record<string, unknown>, { status: 201 })
   }),
 
-  http.patch('*/api/cms/email-workflows/:id', async ({ params, request }) => {
+  http.patch('*/api/cms/flows/:id', async ({ params, request }) => {
     const gate = requireAdmin(request)
     if (gate) return gate
     const idx = workflows.findIndex((w) => w.id === params.id)
-    if (idx === -1) return notFound('Workflow không tồn tại')
+    if (idx === -1) return notFound('Flow không tồn tại')
     const current = workflows[idx]
 
     const body = (await request.json().catch(() => ({}))) as {
@@ -244,13 +244,13 @@ export const emailWorkflowsHandlers = [
     return ok(merged as unknown as Record<string, unknown>)
   }),
 
-  http.delete('*/api/cms/email-workflows/:id', ({ params, request }) => {
+  http.delete('*/api/cms/flows/:id', ({ params, request }) => {
     const gate = requireAdmin(request)
     if (gate) return gate
     const idx = workflows.findIndex((w) => w.id === params.id)
-    if (idx === -1) return notFound('Workflow không tồn tại')
+    if (idx === -1) return notFound('Flow không tồn tại')
     if (workflows[idx].status === 'enabled') {
-      return conflict('Workflow đang bật — tắt (disabled) trước khi xoá')
+      return conflict('Flow đang bật — tắt (disabled) trước khi xoá')
     }
     workflows.splice(idx, 1)
     return ok({ ok: true })

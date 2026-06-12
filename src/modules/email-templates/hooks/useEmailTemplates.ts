@@ -32,8 +32,8 @@ export function useEmailTemplate(id: string | undefined) {
 /** Catalog trigger + biến available — đổ variable picker & sample preview. */
 export function useTriggerCatalog() {
   return useQuery({
-    queryKey: ['email-workflows', 'trigger-catalog'],
-    queryFn: () => api.get<TriggerCatalogItem[]>('/cms/email-workflows/trigger-catalog'),
+    queryKey: ['flows', 'trigger-catalog'],
+    queryFn: () => api.get<TriggerCatalogItem[]>('/cms/flows/trigger-catalog'),
     staleTime: 5 * 60 * 1000, // catalog đổi khi deploy BE, không cần refetch dày
   })
 }

@@ -30,8 +30,8 @@ import type { EmailTemplate } from '@modules/email-templates/types/email-templat
 
 let templates: EmailTemplate[] = EMAIL_TEMPLATES_SEED.map((t) => ({ ...t }))
 
-/** Cho handlers/email-workflows.ts check "Mẫu email không tồn tại" trên store SỐNG
- *  (template tạo trong phiên dùng được ngay trong workflow — như BE). */
+/** Cho handlers/flows.ts check "Mẫu email không tồn tại" trên store SỐNG
+ *  (template tạo trong phiên dùng được ngay trong flow — như BE). */
 export function mockTemplateIdExists(id: string): boolean {
   return templates.some((t) => t.id === id)
 }
@@ -51,7 +51,7 @@ let testSendTimes: number[] = []
 const SUBJECT_MAX = 300
 
 export const emailTemplatesHandlers = [
-  http.get('*/api/cms/email-workflows/trigger-catalog', ({ request }) => {
+  http.get('*/api/cms/flows/trigger-catalog', ({ request }) => {
     const gate = requireAdmin(request)
     if (gate) return gate
     return ok(EMAIL_TRIGGER_CATALOG as unknown as Record<string, unknown>[])
