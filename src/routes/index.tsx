@@ -15,6 +15,8 @@ import { AppInit } from './AppInit'
 // Lazy-load module pages — TipTap + 7-section editor là chunk lớn nhất
 const ChallengeListPage = lazy(() => import('@modules/challenges/pages/ChallengeListPage').then((m) => ({ default: m.ChallengeListPage })))
 const ChallengeEditorPage = lazy(() => import('@modules/challenges/pages/ChallengeEditorPage').then((m) => ({ default: m.ChallengeEditorPage })))
+const CourseListPage = lazy(() => import('@modules/courses/pages/CourseListPage').then((m) => ({ default: m.CourseListPage })))
+const CourseEditorPage = lazy(() => import('@modules/courses/pages/CourseEditorPage').then((m) => ({ default: m.CourseEditorPage })))
 const ArticleListPage = lazy(() => import('@modules/articles/pages/ArticleListPage').then((m) => ({ default: m.ArticleListPage })))
 const ArticleEditorPage = lazy(() => import('@modules/articles/pages/ArticleEditorPage').then((m) => ({ default: m.ArticleEditorPage })))
 const LessonListPage = lazy(() => import('@modules/lessons/pages/LessonListPage').then((m) => ({ default: m.LessonListPage })))
@@ -57,6 +59,8 @@ export function AppRouter() {
                 <Route path="overview" element={<OverviewPage />} />
                 <Route path="challenges" element={<ChallengeListPage />} />
                 <Route path="challenges/:id/edit" element={<ChallengeEditorPage />} />
+                <Route path="courses" element={<CourseListPage />} />
+                <Route path="courses/:id/edit" element={<CourseEditorPage />} />
                 <Route path="articles" element={<ArticleListPage />} />
                 <Route path="articles/:id/edit" element={<ArticleEditorPage />} />
                 <Route path="lessons" element={<LessonListPage />} />

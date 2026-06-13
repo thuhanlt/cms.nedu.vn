@@ -1,5 +1,6 @@
 import { authHandlers } from './auth'
 import { challengesHandlers } from './challenges'
+import { coursesHandlers } from './courses'
 import { articlesHandlers } from './articles'
 import { lessonsHandlers } from './lessons'
 import { personasHandlers } from './personas'
@@ -15,6 +16,7 @@ import { flowsHandlers } from './flows'
 export const handlers = [
   ...authHandlers,
   ...challengesHandlers,
+  ...coursesHandlers,
   ...articlesHandlers,
   ...lessonsHandlers,
   ...personasHandlers,
