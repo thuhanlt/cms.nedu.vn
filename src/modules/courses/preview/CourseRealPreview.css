@@ -1,0 +1,835 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+ * MOCKUP CSS — copy nguyên văn từ nedu.vn CourseDetailClient `MOCKUP_CSS`
+ * (gốc: public/course_detail.html <style>). Scope: mọi selector prefix
+ * `.mockup-root` để không leak ra phần CMS khác.
+ *
+ * KHÔNG sửa các rule `.mockup-root *` — pixel-match với trang thật phụ thuộc
+ * vào reset margin/padding này. Phần preview-only (highlight, device frame)
+ * đặt ở CUỐI file, scope riêng `.course-real-preview`.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+.mockup-root {
+  --primary: #E8A020;
+  --primary-light: #FEF9EC;
+  --primary-dark: #B87818;
+  --bg: #FFFFFF;
+  --surface: #FAFAFA;
+  --border: rgba(232,160,32,0.15);
+  --ink: #1A1A1A;
+  --ink2: #4A4A4A;
+  --ink3: #9A9A9A;
+  --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mockup-root * { box-sizing: border-box; margin: 0; padding: 0; }
+
+.mockup-root [style*="background: #E8A020"],
+.mockup-root [style*="background:#E8A020"],
+.mockup-root [style*="background: var(--primary)"],
+.mockup-root [style*="background:var(--primary)"],
+.mockup-root .btn-cta, .mockup-root .btn-primary, .mockup-root .btn-start-test, .mockup-root .btn-buy {
+  color: #FFFFFF !important;
+}
+
+.mockup-root .icon-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #E8A020;
+  flex-shrink: 0;
+  line-height: 0;
+}
+.mockup-root .icon-outline svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #E8A020;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ─── NAV ──────────────────────────────────────────────────────── */
+.mockup-root .nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  height: 64px;
+}
+.mockup-root .nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.mockup-root .logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  font-family: 'Iowan Old Style', 'Cambria', 'Times New Roman', Georgia, serif;
+  text-decoration: none;
+}
+.mockup-root .breadcrumb {
+  font-size: 13px;
+  color: var(--ink3);
+  flex: 1;
+}
+.mockup-root .breadcrumb a {
+  color: var(--ink3);
+  text-decoration: none;
+}
+.mockup-root .breadcrumb a:hover { color: var(--primary); }
+.mockup-root .breadcrumb .current { color: var(--ink); font-weight: 600; }
+
+.mockup-root .nav-actions {
+  display: flex;
+  gap: 10px;
+}
+.mockup-root .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, opacity 0.15s, transform 0.15s;
+  font-family: inherit;
+}
+.mockup-root .btn-cta {
+  background: var(--primary);
+  color: #FFFFFF !important;
+}
+.mockup-root .btn-cta:hover { background: var(--primary-dark); color: #FFFFFF !important; }
+.mockup-root .btn-cta-white { color: #FFFFFF !important; }
+.mockup-root .btn-cta-white:hover { color: #FFFFFF !important; background: var(--primary-dark); }
+.mockup-root .btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+.mockup-root .btn-ghost:hover { background: var(--primary-light); }
+.mockup-root .btn-full { width: 100%; justify-content: center; padding: 14px; font-size: 15px; }
+
+/* ─── HERO ─────────────────────────────────────────────────────── */
+.mockup-root .hero {
+  background: linear-gradient(135deg, #2a1f10 0%, #5a3d18 50%, #3d2a12 100%);
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  padding: 130px 24px 70px;
+  position: relative;
+  overflow: hidden;
+}
+.mockup-root .hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 0;
+  pointer-events: none;
+}
+.mockup-root .hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.mockup-root .hero-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.mockup-root .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.mockup-root .badge-amber {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.mockup-root .badge-red {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.mockup-root .badge-open {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.mockup-root .hero-title {
+  font-family: 'Iowan Old Style', 'Cambria', 'Times New Roman', Georgia, serif;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
+}
+.mockup-root .hero-sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
+  max-width: 640px;
+  margin-bottom: 30px;
+}
+.mockup-root .hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+}
+.mockup-root .meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mockup-root .meta-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.mockup-root .meta-value {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ─── MAIN ─────────────────────────────────────────────────────── */
+.mockup-root .main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ─── Cards (shared) ───────────────────────────────────────────── */
+.mockup-root .card {
+  background: var(--surface);
+  border: 1.5px solid rgba(232, 160, 32, 0.45);
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+}
+.mockup-root .card-heading {
+  font-family: 'Iowan Old Style', 'Cambria', 'Times New Roman', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #E8A020;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.mockup-root .card-sub {
+  font-size: 14px;
+  color: var(--ink3);
+  margin-bottom: 22px;
+}
+
+/* ─── A. Test Widget ───────────────────────────────────────────── */
+.mockup-root .test-widget {
+  background: var(--primary-light);
+  border: 1.5px solid rgba(232, 160, 32, 0.45);
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 24px;
+  position: relative;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+}
+.mockup-root .test-title {
+  font-family: 'Iowan Old Style', 'Cambria', 'Times New Roman', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #E8A020;
+  margin-bottom: 12px;
+  line-height: 1.25;
+}
+.mockup-root .test-body {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.7;
+  margin-bottom: 18px;
+  max-width: 540px;
+}
+.mockup-root .test-steps {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 18px 0 22px;
+}
+.mockup-root .test-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 160px;
+}
+.mockup-root .step-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.mockup-root .step-text {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.4;
+}
+.mockup-root .test-note {
+  font-size: 12px;
+  color: var(--ink3);
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ─── B. Outcomes Grid ─────────────────────────────────────────── */
+.mockup-root .outcomes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.mockup-root .outcome {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.mockup-root .outcome-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mockup-root .outcome-icon svg {
+  width: 22px; height: 22px;
+  fill: none; stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mockup-root .outcome-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.mockup-root .outcome-desc {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.55;
+}
+
+/* ─── C. Accordion (Chương trình học) ──────────────────────────── */
+.mockup-root .module {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+.mockup-root .module:hover { border-color: rgba(232,160,32,0.3); }
+.mockup-root .module-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+.mockup-root .module-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.mockup-root .module-info {
+  flex: 1;
+  min-width: 0;
+}
+.mockup-root .module-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.mockup-root .module-meta {
+  font-size: 12px;
+  color: var(--ink3);
+}
+.mockup-root .module-arrow {
+  width: 24px;
+  height: 24px;
+  color: var(--primary);
+  transition: transform 0.25s;
+  flex-shrink: 0;
+}
+.mockup-root .module.open .module-arrow { transform: rotate(180deg); }
+.mockup-root .module-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.mockup-root .module.open .module-body { max-height: 400px; }
+.mockup-root .module-topics {
+  padding: 0 20px 20px 72px;
+  list-style: none;
+}
+.mockup-root .module-topics li {
+  font-size: 13px;
+  color: var(--ink2);
+  padding: 8px 12px;
+  display: flex;
+  gap: 10px;
+  border: 1px solid rgba(232, 160, 32, 0.25);
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+.mockup-root .module-topics li:last-child { margin-bottom: 0; }
+.mockup-root .module-topics li::before {
+  content: '→';
+  color: var(--primary);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ─── D. Người dẫn đường ───────────────────────────────────────── */
+.mockup-root .instructor {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.mockup-root .instructor--co {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px dashed var(--border);
+}
+.mockup-root .instructor-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  font-family: 'Iowan Old Style', 'Cambria', 'Times New Roman', Georgia, serif;
+  font-size: 32px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mockup-root .instructor-avatar--img {
+  object-fit: cover;
+  display: block;
+  padding: 0;
+}
+.mockup-root .instructor-name {
+  font-family: 'Iowan Old Style', 'Cambria', 'Times New Roman', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.mockup-root .instructor-title {
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.mockup-root .instructor-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.mockup-root .instructor-tag {
+  font-size: 11px;
+  color: var(--primary-dark);
+  background: var(--primary-light);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.mockup-root .instructor-bio {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+.mockup-root .instructor-subhead {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+.mockup-root .instructor-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+.mockup-root .instructor-list li {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.65;
+  padding: 4px 0 4px 18px;
+  position: relative;
+}
+.mockup-root .instructor-list li::before {
+  content: '•';
+  position: absolute;
+  left: 4px;
+  color: var(--primary);
+  font-weight: 700;
+}
+.mockup-root .achievement-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.mockup-root .achievement-date {
+  color: #E8A020;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-family: monospace;
+}
+.mockup-root .achievement-text {
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ─── E. Reviews ───────────────────────────────────────────────── */
+.mockup-root .rating-overall {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: var(--primary-light);
+  border-radius: 12px;
+}
+.mockup-root .rating-num {
+  font-family: 'Iowan Old Style', 'Cambria', 'Times New Roman', Georgia, serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+}
+.mockup-root .rating-stars {
+  color: var(--primary);
+  display: flex;
+  gap: 2px;
+}
+.mockup-root .rating-stars svg { width: 16px; height: 16px; fill: currentColor; }
+.mockup-root .rating-text {
+  font-size: 12px;
+  color: var(--ink3);
+}
+.mockup-root .reviews {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  transition: opacity 0.2s ease;
+}
+.mockup-root .review {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mockup-root .review-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mockup-root .review-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.mockup-root .review-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mockup-root .review-avatar--img {
+  object-fit: cover;
+  display: block;
+  padding: 0;
+}
+.mockup-root .review-stars {
+  display: flex;
+  gap: 2px;
+  color: var(--primary);
+}
+.mockup-root .review-stars svg { width: 14px; height: 14px; fill: currentColor; }
+.mockup-root .review-meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4A4A4A;
+}
+.mockup-root .review-text {
+  font-size: 13px;
+  color: #4A4A4A;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* ─── Pagination ───────────────────────────────────────────────── */
+.mockup-root .reviews-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.mockup-root .page-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: var(--ink2);
+  border: 1px solid rgba(232, 160, 32, 0.3);
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.mockup-root .page-btn:hover { background: var(--primary-light); color: var(--primary-dark); }
+.mockup-root .page-btn.active {
+  background: var(--primary);
+  color: #FFFFFF;
+  border-color: var(--primary);
+}
+
+/* ─── SIDEBAR ──────────────────────────────────────────────────── */
+.mockup-root .sidebar {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border: 1.5px solid rgba(232, 160, 32, 0.45);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+}
+.mockup-root .sidebar-head {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  padding: 24px;
+}
+.mockup-root .price {
+  font-family: 'Iowan Old Style', 'Cambria', 'Times New Roman', Georgia, serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.mockup-root .price-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.mockup-root .sidebar-body {
+  padding: 22px 24px 24px;
+}
+.mockup-root .info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 13px;
+  border-bottom: 1px dashed var(--border);
+}
+.mockup-root .info-row:last-of-type { border-bottom: none; margin-bottom: 16px; }
+.mockup-root .info-row + .info-row {
+  border-top: 1px solid rgba(232, 160, 32, 0.3);
+  padding-top: 10px;
+  margin-top: 10px;
+}
+.mockup-root .info-label { color: var(--ink3); }
+.mockup-root .info-value { color: var(--ink); font-weight: 700; }
+
+.mockup-root .sidebar .btn { margin-bottom: 10px; }
+
+.mockup-root .checklist {
+  list-style: none;
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px dashed var(--border);
+}
+.mockup-root .checklist li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--ink2);
+  padding: 6px 0;
+}
+.mockup-root .check-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.mockup-root .check-icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+.mockup-root .seats-badge {
+  margin-top: 20px;
+  background: var(--primary-light);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-align: center;
+}
+.mockup-root .seats-badge strong { color: var(--primary); font-size: 14px; }
+
+/* ─── Card shadow override ─────────────────────────────────────── */
+.mockup-root .card, .mockup-root .test-widget, .mockup-root .sidebar {
+  border: 1.5px solid rgba(232, 160, 32, 0.4) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10) !important;
+}
+
+/* ─── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .mockup-root .nav-inner { gap: 12px; padding: 0 16px; }
+  .mockup-root .breadcrumb { display: none; }
+  .mockup-root .btn { padding: 8px 14px; font-size: 13px; }
+  .mockup-root .hero { padding: 100px 16px 50px; }
+  .mockup-root .hero-title { font-size: 32px; }
+  .mockup-root .hero-sub { font-size: 15px; }
+  .mockup-root .hero-meta { gap: 18px; }
+  .mockup-root .main {
+    grid-template-columns: 1fr;
+    padding: 36px 16px;
+    gap: 24px;
+  }
+  .mockup-root .sidebar { position: static; }
+  .mockup-root .outcomes { grid-template-columns: 1fr; }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+ * PREVIEW-ONLY — không thuộc trang thật nedu.vn. Device frame + highlight cho
+ * editor CMS. Scope `.course-real-preview` (wrapper ngoài `.mockup-root`).
+ * ═════════════════════════════════════════════════════════════════════════════ */
+
+.course-real-preview {
+  position: relative;
+}
+
+/* Device = mobile: ép wrapper xuống ~390px để media query (max-width:768px)
+ * của .mockup-root kích hoạt như trên điện thoại thật. `nav` của mockup là
+ * position:fixed → trong preview chuyển thành absolute (theo wrapper) để không
+ * dán lên viewport CMS. */
+.course-real-preview.preview-mobile {
+  width: 390px;
+  margin: 0 auto;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.course-real-preview .mockup-root .nav {
+  position: absolute;
+}
+
+/* Highlight section đang chỉnh sửa — outline vàng + nhãn. Scope `.crp-section`
+ * để không đụng cấu trúc mockup. */
+.course-real-preview .crp-section {
+  position: relative;
+  scroll-margin-top: 80px;
+}
+.course-real-preview .crp-section.crp-active {
+  outline: 2px solid #F5B419;
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.course-real-preview .crp-edit-label {
+  position: absolute;
+  top: -26px;
+  left: 0;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: #F5B419;
+  color: #1F2937;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.6;
+}
