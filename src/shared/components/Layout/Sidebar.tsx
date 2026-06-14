@@ -36,7 +36,7 @@ interface NavItem {
 }
 
 const NAV_PROGRAM_CHILDREN: NavItem[] = [
-  { label: 'Khoá học', icon: GraduationCap, soon: true },
+  { to: '/dashboard/courses', label: 'Khoá học', icon: GraduationCap, accent: '#15803D' },
   { to: '/dashboard/challenges', label: 'Thử thách', icon: Trophy, accent: '#F5B419' },
   { label: 'Workshop', icon: Sparkles, soon: true },
 ]

@@ -1,0 +1,221 @@
+import type { Course, CourseContent } from '@modules/courses/types/course'
+import { nowIso } from './_helpers'
+
+export function blankCourseContent(): CourseContent {
+  return {
+    heroDesktop: '',
+    heroMobile: '',
+    badges: {
+      b1: { value: '', auto: true },
+      b2: { value: '', auto: true },
+      b3: '',
+    },
+    subTitle: '',
+    type: 'retreat',
+    format: 'offline',
+    startDate: '',
+    endDate: '',
+    testWidgetEnabled: true,
+    outcomesTitle: 'Bạn sẽ học được gì',
+    outcomesSub: '6 năng lực cốt lõi sau khi hoàn thành khoá học.',
+    outcomes: [],
+    curriculumTitle: 'Chương trình học',
+    curriculumSub: '4 module — từng bước có chủ đích.',
+    curriculum: [],
+    instructorsTitle: 'Người dẫn đường',
+    instructorsSub: 'Đồng hành cùng bạn qua từng buổi học.',
+    instructors: [],
+    reviewsSub: 'Từ các khoá Là Chính Mình K3, K4',
+    reviews: [],
+    pricing: {
+      label: '',
+      labelAuto: true,
+      price: '',
+      note: '',
+      urgency: '',
+      features: [],
+      promo: {
+        enabled: false,
+        startDate: '',
+        endDate: '',
+        tab: 'discount',
+        priceOriginal: '',
+        priceFinal: '',
+        bonusCourse: '',
+        discountDesc: '',
+        giftTitle: '',
+        merchList: '',
+        giftDesc: '',
+      },
+    },
+    qaTitle: 'Câu hỏi thường gặp',
+    qa: [],
+  }
+}
+
+function laChinhMinhContent(): CourseContent {
+  return {
+    heroDesktop: '',
+    heroMobile: '',
+    badges: {
+      b1: { value: 'RETREAT · LÀ CHÍNH MÌNH 5', auto: true },
+      b2: { value: 'KHOÁ 5', auto: true },
+      b3: '',
+    },
+    subTitle:
+      'Hành trình 4 ngày để hiểu rõ bản thân, làm chủ cảm xúc và thiết kế cuộc sống có chủ đích — cùng cộng đồng 15-20 người không phán xét.',
+    type: 'retreat',
+    format: 'offline',
+    startDate: '2026-08-27',
+    endDate: '2026-08-30',
+    testWidgetEnabled: true,
+    outcomesTitle: 'Bạn sẽ học được gì',
+    outcomesSub: '6 năng lực cốt lõi sau khi hoàn thành khoá học.',
+    outcomes: [
+      { icon: '◎', title: 'Biết mình thực sự là ai', desc: 'Hiểu rõ giá trị cốt lõi, điểm mạnh và điểm yếu — không phải qua lời người khác nói.' },
+      { icon: '♡', title: 'Làm chủ cảm xúc của mình', desc: 'Nhận diện và làm việc cùng cảm xúc thay vì né tránh hay bị cuốn đi.' },
+      { icon: '◷', title: 'Thoát khỏi vòng lặp do dự', desc: 'Ra quyết định rõ ràng hơn, chọn đúng hướng đi cho mình — không phải cho ai khác.' },
+      { icon: '⌇', title: 'Có bản thiết kế cuộc sống', desc: 'Hình dung được mình muốn sống thế nào trong 1–3 năm tới.' },
+      { icon: '◉', title: 'Sống có chủ đích hơn', desc: 'Mỗi ngày là lựa chọn có ý thức, không còn chạy theo quán tính.' },
+      { icon: '⦿', title: 'Thuộc về một cộng đồng thật', desc: 'Kết nối với 15–20 người cùng hành trình — không phán xét, không giả tạo.' },
+    ],
+    curriculumTitle: 'Chương trình học',
+    curriculumSub: '4 module — từng bước có chủ đích.',
+    curriculum: [
+      {
+        title: 'Ngày 1 — Nhận Diện Bản Thân & Trưởng Thành Nội Tâm',
+        meta: 'Ngày 1 · Full day',
+        topics: [
+          'Nhìn lại cách bạn ra quyết định, hợp tác và phản ứng trước biến cố',
+          'Hiểu các nguyên tắc xây dựng và gìn giữ lòng tin',
+          'Nắm công thức trưởng thành và hai con đường phát triển bản thân',
+        ].join('\n'),
+      },
+      { title: 'Ngày 2 — Tài Chính, Mục Tiêu & Hiểu Chính Mình', meta: 'Ngày 2 · Full day', topics: '' },
+      { title: 'Ngày 3 — Gia Đình, Gốc Rễ & Buông Bỏ', meta: 'Ngày 3 · Full day', topics: '' },
+      { title: 'Ngày 4 — Tương Lai, Hành Động & Cộng Đồng', meta: 'Ngày 4 · Full day', topics: '' },
+    ],
+    instructorsTitle: 'Người dẫn đường',
+    instructorsSub: 'Đồng hành cùng bạn qua từng buổi học.',
+    instructors: [
+      {
+        name: 'Nhi Lê',
+        title: 'Coach · Facilitator · Founder NhiLe Holdings',
+        avatarUrl: '',
+        tags: 'ICF Certified Coach, Applied Psychology, Business Sustainability',
+        intro: 'Nhi Lê là người dẫn dắt hành trình tìm về chính mình cho hàng nghìn học viên trẻ trên khắp Việt Nam.',
+        education:
+          'Nhi Lê có nền tảng học thuật bài bản — Applied Psychology + Business Sustainability + ICF Certified Coaching, cộng thêm 10+ năm coaching cá nhân hoá.',
+        career: [
+          '- YouTube Nhi Le · 500K+ subscribers',
+          '- NhiLe Team · vận hành 6 platform giáo dục cho người trưởng thành',
+          '- NhiLe Foundation · 100+ học bổng cho nữ founder',
+          '- Ms Nhi podcast · top 10 podcast giáo dục Việt Nam',
+        ].join('\n'),
+        awards: ['2025-04 | HER Courage Awards 2025', '2025-08 | YouTube global blog appearance'].join('\n'),
+      },
+      {
+        name: 'Alex Low',
+        title: 'Phong Thuỷ Practitioner · Dahann I-Ching Consultancy',
+        avatarUrl: '',
+        tags: 'Phong Thuỷ, Tư vấn doanh nghiệp, Diễn giả quốc tế',
+        intro: 'Hơn 20 năm thực hành Phong Thuỷ và Kinh Dịch ứng dụng cho doanh nghiệp châu Á.',
+        education: '',
+        career: '',
+        awards: '',
+      },
+      {
+        name: 'Denise Wong',
+        title: 'Speaker · Talkshow Host · Spice & Nice',
+        avatarUrl: '',
+        tags: 'Tâm lý học, Sáng tạo nội dung, Truyền cảm hứng',
+        intro: '',
+        education: '',
+        career: ['- Sip and Share', '- Growth is a Bit of a B*tch', '- Spice & Nice channel'].join('\n'),
+        awards: '',
+      },
+    ],
+    reviewsSub: 'Từ các khoá Là Chính Mình K3, K4',
+    reviews: [
+      {
+        name: 'Cẩm Nhung',
+        cohort: 'Là Chính Mình 5',
+        text: 'Sau 4 ngày khoá học, mình nhận ra mình đã sống cuộc đời của ba mẹ suốt 28 năm. Không phải mình ghét điều đó — chỉ là mình chưa từng tự hỏi mình muốn gì.',
+        avatarUrl: '',
+      },
+      {
+        name: 'Nhi Pi',
+        cohort: 'Là Chính Mình 5',
+        text: 'Mình đến với cảm giác bế tắc, mệt mỏi. Ra về với 1 cuốn sổ tay đầy ý tưởng và một cộng đồng để đi tiếp.',
+        avatarUrl: '',
+      },
+      {
+        name: 'Tâm Như',
+        cohort: 'Là Chính Mình 5',
+        text: 'Nhi và team tạo không gian an toàn để mình được nói thật. Mình không nghĩ trong 4 ngày mình lại thay đổi nhiều đến thế.',
+        avatarUrl: '',
+      },
+    ],
+    pricing: {
+      label: 'Học phí · Là Chính Mình 5',
+      labelAuto: true,
+      price: '68.690.000đ',
+      note: 'Bao gồm 4 ngày học + tài liệu + cộng đồng Là Chính Mình',
+      urgency: 'Còn 30 suất',
+      features: [
+        '4 ngày học cùng Nhi Le, Alex Low, Denise Wong',
+        'Toàn bộ tài liệu khoá học (worksheet, journal)',
+        'Tham gia cộng đồng Là Chính Mình (15–20 người/khoá)',
+        'Kết nối alumni dài hạn sau khoá',
+        'Học lại miễn phí kỳ kế tiếp',
+      ],
+      promo: {
+        enabled: false,
+        startDate: '',
+        endDate: '',
+        tab: 'discount',
+        priceOriginal: '',
+        priceFinal: '',
+        bonusCourse: '',
+        discountDesc: '',
+        giftTitle: '',
+        merchList: '',
+        giftDesc: '',
+      },
+    },
+    qaTitle: 'Câu hỏi thường gặp',
+    qa: [
+      {
+        q: 'Khoá học có hoàn tiền không?',
+        a: 'Trong 7 ngày đầu sau khi đăng ký, bạn có thể yêu cầu hoàn tiền 100%. Sau khi khoá bắt đầu, học phí không hoàn lại.',
+      },
+      {
+        q: 'Mình không có nền tảng gì có học được không?',
+        a: 'Có. Khoá thiết kế cho người trưởng thành ở mọi giai đoạn — chỉ cần bạn sẵn sàng nhìn lại chính mình.',
+      },
+      {
+        q: 'Học phí bao gồm gì?',
+        a: '4 ngày học, toàn bộ tài liệu, ăn nhẹ giờ giải lao, và quyền tham gia cộng đồng alumni.',
+      },
+    ],
+  }
+}
+
+export const courses: Course[] = [
+  {
+    id: 'co-la-chinh-minh-5',
+    slug: 'la-chinh-minh-5',
+    name: 'Là Chính Mình 5',
+    published: true,
+    content: laChinhMinhContent(),
+    updatedAt: nowIso(),
+  },
+  {
+    id: 'co-cuoc-song-2',
+    slug: 'cuoc-song-cua-ban-2',
+    name: 'Cuộc Sống Của Bạn 2',
+    published: false,
+    content: { ...blankCourseContent(), subTitle: 'Khoá học 6 tuần thiết kế cuộc sống.', startDate: '2026-10-01', endDate: '2026-11-15' },
+    updatedAt: nowIso(),
+  },
+]

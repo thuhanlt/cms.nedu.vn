@@ -1,4 +1,4 @@
-import { Trophy, FileText, BookOpen, Award, Star, HelpCircle } from 'lucide-react'
+import { Trophy, FileText, BookOpen, Award, Star, HelpCircle, GraduationCap } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '@modules/auth/stores/useAuthStore'
 
@@ -10,6 +10,7 @@ interface StatCard {
 }
 
 const CARDS: StatCard[] = [
+  { label: 'Khoá học', to: '/dashboard/courses', icon: GraduationCap, color: '#15803D' },
   { label: 'Thử thách', to: '/dashboard/challenges', icon: Trophy, color: '#F5B419' },
   { label: 'Bài viết', to: '/dashboard/articles', icon: FileText, color: '#2D6A8C' },
   { label: 'Bài học', to: '/dashboard/lessons', icon: BookOpen, color: '#15803D' },
