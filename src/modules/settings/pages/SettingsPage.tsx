@@ -22,6 +22,11 @@ function safeDate(iso?: string): string {
   }
 }
 
+// Hero/CTA settings TẠM ẨN: chưa có endpoint backend thật + nedu.vn chưa đọc
+// (đang hardcode hero/stats/CTA). Founder wire sau → bật lại = true. Giữ nguyên
+// HeroSettingsSection bên dưới, không xoá.
+const SHOW_HERO_SETTINGS = false
+
 export function SettingsPage() {
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -30,12 +35,12 @@ export function SettingsPage() {
           Cài đặt site
         </h1>
         <p className="text-sm text-[#6B7280] mt-1">
-          Nội dung hiển thị trên nedu.vn. Mỗi mục dưới đây tải và lưu độc lập.
+          Thông tin doanh nghiệp hiển thị ở chân trang nedu.vn.
         </p>
       </header>
 
       <div className="space-y-5">
-        <HeroSettingsSection />
+        {SHOW_HERO_SETTINGS && <HeroSettingsSection />}
         <CompanyInfoSection />
       </div>
     </div>
