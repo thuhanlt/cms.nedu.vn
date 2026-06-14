@@ -6,9 +6,9 @@ import { StatusPill } from '@shared/components/StatusPill'
 import { ConfirmDialog } from '@shared/components/ConfirmDialog'
 import { toast } from '@shared/stores/useToastStore'
 import { useCourses, useCreateCourse, useDeleteCourse } from '../hooks/useCourses'
-import type { Course } from '../types/course'
+import { LEARNING_TYPE_LABEL, type Course, type CourseStatus } from '../types/course'
 
-type Filter = 'all' | 'published' | 'draft'
+type Filter = CourseStatus | 'all'
 
 const FILTERS: Array<{ key: Filter; label: string }> = [
   { key: 'all', label: 'Tất cả' },
@@ -16,11 +16,10 @@ const FILTERS: Array<{ key: Filter; label: string }> = [
   { key: 'draft', label: 'Nháp' },
 ]
 
-const TYPE_LABEL: Record<string, string> = {
-  retreat: 'Retreat',
-  online: 'Online',
-  offline: 'Offline',
-  hybrid: 'Hybrid',
+function fmtDate(iso: string): string {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return '—'
+  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
 export function CourseListPage() {
@@ -29,7 +28,7 @@ export function CourseListPage() {
   const [filter, setFilter] = useState<Filter>('all')
   const [confirmId, setConfirmId] = useState<string | null>(null)
 
-  const { data, isLoading, isError, refetch } = useCourses({ published: filter, q: search || undefined })
+  const { data, isLoading, isError, refetch } = useCourses({ status: filter, q: search || undefined })
   const list = data?.data ?? []
   const total = data?.meta?.total ?? list.length
 
@@ -70,47 +69,34 @@ export function CourseListPage() {
             >
               {c.name}
             </Link>
-            {c.content.subTitle && (
-              <div className="text-xs text-[#6B7280] mt-0.5 line-clamp-1">{c.content.subTitle}</div>
+            {c.tagline && (
+              <div className="text-xs text-[#6B7280] mt-0.5 line-clamp-1">{c.tagline}</div>
             )}
             {c.slug && <div className="text-xs text-[#9CA3AF] mt-0.5">nedu.vn/khoa-hoc/{c.slug}</div>}
           </div>
         ),
       },
       {
-        key: 'type',
+        key: 'learning_type',
         header: 'Loại',
-        width: '110px',
+        width: '120px',
         render: (c) => (
           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#FEF3C7] text-[#B45309]">
-            {TYPE_LABEL[c.content.type] ?? c.content.type}
+            {LEARNING_TYPE_LABEL[c.learning_type] ?? c.learning_type}
           </span>
         ),
-      },
-      {
-        key: 'price',
-        header: 'Học phí',
-        width: '160px',
-        render: (c) => <span className="text-sm text-[#374151]">{c.content.pricing.price || '—'}</span>,
-      },
-      {
-        key: 'startDate',
-        header: 'Khai giảng',
-        width: '120px',
-        render: (c) => {
-          const d = c.content.startDate
-          if (!d) return <span className="text-sm text-[#9CA3AF]">—</span>
-          // YYYY-MM-DD → DD/MM/YYYY
-          const parts = d.split('-')
-          const formatted = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : d
-          return <span className="text-sm text-[#374151]">{formatted}</span>
-        },
       },
       {
         key: 'status',
         header: 'Trạng thái',
         width: '110px',
         render: (c) => <StatusPill status={c.published ? 'published' : 'draft'} />,
+      },
+      {
+        key: 'updatedAt',
+        header: 'Cập nhật',
+        width: '120px',
+        render: (c) => <span className="text-sm text-[#374151]">{fmtDate(c.updatedAt)}</span>,
       },
       {
         key: 'actions',
@@ -154,7 +140,7 @@ export function CourseListPage() {
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#2D6A8C] hover:bg-[#1F5374] text-white text-sm font-medium disabled:opacity-60"
         >
           <Plus size={16} />
-          {create.isPending ? 'Đang tạo...' : 'Khoá học mới'}
+          {create.isPending ? 'Đang tạo...' : 'Khoá mới'}
         </button>
       </header>
 
@@ -194,7 +180,7 @@ export function CourseListPage() {
         rowKey={(c) => c.id}
         emptyTitle={search || filter !== 'all' ? 'Không có khoá học phù hợp' : 'Chưa có khoá học'}
         emptyDescription={
-          search || filter !== 'all' ? 'Thử đổi từ khoá hoặc bộ lọc khác.' : 'Bấm "Khoá học mới" để bắt đầu.'
+          search || filter !== 'all' ? 'Thử đổi từ khoá hoặc bộ lọc khác.' : 'Bấm "Khoá mới" để bắt đầu.'
         }
       />
 
