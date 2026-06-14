@@ -5,7 +5,9 @@ import { EmptyState } from '@shared/components/EmptyState'
 import { SaveButton, type SaveState } from '@shared/components/SaveButton'
 import { toast } from '@shared/stores/useToastStore'
 import { useSiteSettings, useUpdateSiteSettings } from '../hooks/useSiteSettings'
+import { useSiteConfig, useUpdateSiteConfig } from '../hooks/useSiteConfig'
 import type { SiteSettings } from '../types/settings'
+import type { SiteConfig } from '../types/site-config'
 
 const inputClass =
   'w-full px-3 py-2 rounded-md border border-[#D1D5DB] bg-white text-sm focus:outline-none focus:border-[#2D6A8C] focus:ring-1 focus:ring-[#2D6A8C]/20'
@@ -190,8 +192,122 @@ export function SettingsPage() {
             />
           </Field>
         </Section>
+
+        {/* Thông tin doanh nghiệp — config riêng, lưu độc lập */}
+        <CompanyInfoSection />
       </div>
     </div>
+  )
+}
+
+// Thông tin doanh nghiệp (tên DN + MST + cờ ẩn/hiện) hiển thị ở footer nedu.vn.
+// State + save tách riêng khỏi Hero settings (endpoint /cms/site-config khác).
+function CompanyInfoSection() {
+  const { data: original, isLoading, isError } = useSiteConfig()
+  const update = useUpdateSiteConfig()
+  const [draft, setDraft] = useState<SiteConfig | null>(null)
+  const [saveState, setSaveState] = useState<SaveState>('idle')
+  const [savedAt, setSavedAt] = useState<Date | null>(null)
+
+  useEffect(() => {
+    if (original && !draft) setDraft(original)
+  }, [original, draft])
+
+  const dirty = useMemo(() => {
+    if (!draft || !original) return false
+    return JSON.stringify(draft) !== JSON.stringify(original)
+  }, [draft, original])
+
+  const onChange = (patch: Partial<SiteConfig>) => {
+    setDraft((d) => (d ? { ...d, ...patch } : d))
+    if (saveState === 'saved') setSaveState('idle')
+  }
+
+  const onSave = async () => {
+    if (!draft) return
+    setSaveState('saving')
+    try {
+      const saved = await update.mutateAsync(draft)
+      setDraft(saved)
+      setSavedAt(new Date())
+      setSaveState('saved')
+      toast.success('Đã lưu thông tin doanh nghiệp')
+    } catch {
+      setSaveState('error')
+      toast.error('Lưu thất bại — kiểm tra quyền admin')
+    }
+  }
+
+  return (
+    <Section
+      title="Thông tin doanh nghiệp"
+      description="Tên doanh nghiệp + mã số thuế hiển thị ở chân trang nedu.vn. Tắt công tắc để ẩn."
+    >
+      {isError && (
+        <div className="mb-4 px-3 py-2 rounded-md bg-[#FEE2E2] text-[#B91C1C] text-xs">
+          Không tải được thông tin doanh nghiệp — kiểm tra quyền admin.
+        </div>
+      )}
+
+      {isLoading || !draft ? (
+        <Skeleton height={140} />
+      ) : (
+        <>
+          {dirty && (
+            <div className="mb-4 px-3 py-2 rounded-md bg-[#FEF3C7] text-[#B45309] text-xs">
+              Có thay đổi chưa lưu — đừng quên bấm "Lưu thông tin".
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 gap-4">
+            <Field label="Tên doanh nghiệp" hint="VD: CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ NHILE">
+              <input
+                className={inputClass}
+                value={draft.company_name}
+                onChange={(e) => onChange({ company_name: e.target.value })}
+              />
+            </Field>
+            <Field label="Mã số thuế" hint="VD: 0317268736">
+              <input
+                className={inputClass}
+                value={draft.tax_id}
+                onChange={(e) => onChange({ tax_id: e.target.value })}
+              />
+            </Field>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between rounded-md border border-[#E5E7EB] px-3 py-2.5">
+            <div>
+              <div className="text-xs font-medium text-[#374151]">Hiển thị trên website</div>
+              <div className="text-[11px] text-[#9CA3AF] mt-0.5">
+                {draft.is_visible
+                  ? 'Tên DN + MST đang hiển thị ở footer nedu.vn'
+                  : 'Đang ẩn — footer nedu.vn không hiện tên DN + MST'}
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={draft.is_visible}
+              onClick={() => onChange({ is_visible: !draft.is_visible })}
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors ${
+                draft.is_visible ? 'bg-[#2D6A8C]' : 'bg-[#D1D5DB]'
+              }`}
+            >
+              <span
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                  draft.is_visible ? 'translate-x-[22px]' : 'translate-x-0.5'
+                }`}
+              />
+            </button>
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <SaveButton state={saveState} onClick={onSave} savedAt={savedAt} label="Lưu thông tin" />
+          </div>
+        </>
+      )}
+    </Section>
   )
 }
 
