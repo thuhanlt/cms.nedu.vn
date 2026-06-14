@@ -4,6 +4,7 @@
 export interface SiteConfig {
   company_name: string
   tax_id: string
-  // false → nedu.vn footer ẩn block tên DN + MST.
+  address: string
+  // false → nedu.vn footer ẩn block tên DN + MST + địa chỉ.
   is_visible: boolean
 }
