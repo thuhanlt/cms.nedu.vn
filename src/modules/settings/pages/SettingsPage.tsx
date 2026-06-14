@@ -273,6 +273,13 @@ function CompanyInfoSection() {
                 onChange={(e) => onChange({ tax_id: e.target.value })}
               />
             </Field>
+            <Field label="Địa chỉ" hint="Địa chỉ trụ sở hiển thị ở footer">
+              <textarea
+                className={textareaClass}
+                value={draft.address}
+                onChange={(e) => onChange({ address: e.target.value })}
+              />
+            </Field>
           </div>
 
           <div className="mt-4 flex items-center justify-between rounded-md border border-[#E5E7EB] px-3 py-2.5">
@@ -280,8 +287,8 @@ function CompanyInfoSection() {
               <div className="text-xs font-medium text-[#374151]">Hiển thị trên website</div>
               <div className="text-[11px] text-[#9CA3AF] mt-0.5">
                 {draft.is_visible
-                  ? 'Tên DN + MST đang hiển thị ở footer nedu.vn'
-                  : 'Đang ẩn — footer nedu.vn không hiện tên DN + MST'}
+                  ? 'Tên DN + MST + địa chỉ đang hiển thị ở footer nedu.vn'
+                  : 'Đang ẩn — footer nedu.vn không hiện tên DN + MST + địa chỉ'}
               </div>
             </div>
             <button
