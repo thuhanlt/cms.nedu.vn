@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Monitor, Smartphone, Maximize2, Minimize2 } from 'lucide-react'
 import { useCourse, useUpdateCourse } from '../hooks/useCourses'
@@ -14,6 +14,7 @@ import { InstructorsSection } from '../components/editor/InstructorsSection'
 import { ReviewsSection } from '../components/editor/ReviewsSection'
 import { PricingSidebarSection } from '../components/editor/PricingSidebarSection'
 import { RunsSection } from '../components/editor/RunsSection'
+import { ResizeHandle } from '../components/editor/ResizeHandle'
 import { SaveButton, type SaveState } from '@shared/components/SaveButton'
 import { Skeleton } from '@shared/components/Skeleton'
 import { toast } from '@shared/stores/useToastStore'
@@ -111,6 +112,26 @@ export function draftToCourseContent(course: Course, run?: CourseRun): CourseCon
   }
 }
 
+// ── Layout panes resizable + nhớ kích thước (localStorage) ───────────────────
+const LS_NAV_W = 'cms.course-editor.nav-w'
+const LS_EDITOR_W = 'cms.course-editor.editor-w'
+const LS_NAV_COLLAPSED = 'cms.course-editor.nav-collapsed'
+const NAV_COLLAPSED_W = 56
+// Ô soạn kéo nhỏ tối đa = EDITOR_MIN_FLOOR (px) → người dùng kéo gần hết để
+// nhường chỗ xem preview khi cần. Preview luôn chừa tối thiểu PREVIEW_MIN_W.
+const EDITOR_MIN_FLOOR = 100
+const PREVIEW_MIN_W = 200
+
+const clampW = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v))
+function loadNum(key: string, fallback: number): number {
+  if (typeof window === 'undefined') return fallback
+  const n = Number(window.localStorage.getItem(key))
+  return Number.isFinite(n) && n > 0 ? n : fallback
+}
+function loadBool(key: string): boolean {
+  return typeof window !== 'undefined' && window.localStorage.getItem(key) === '1'
+}
+
 export function CourseEditorPage() {
   const { id } = useParams<{ id: string }>()
   const { data: original, isLoading } = useCourse(id)
@@ -124,9 +145,36 @@ export function CourseEditorPage() {
   const [saveState, setSaveState] = useState<SaveState>('idle')
   const [savedAt, setSavedAt] = useState<Date | null>(null)
 
+  // Độ rộng pane (px) — kéo chỉnh, nhớ qua localStorage.
+  const [navWidth, setNavWidth] = useState(() => loadNum(LS_NAV_W, 220))
+  const [editorWidth, setEditorWidth] = useState(() => loadNum(LS_EDITOR_W, 500))
+  const [navCollapsed, setNavCollapsed] = useState(() => loadBool(LS_NAV_COLLAPSED))
+  const bodyRef = useRef<HTMLDivElement>(null)
+
+  // Kéo ô soạn: min = EDITOR_MIN_FLOOR (kéo gần hết để xem preview); max = chừa preview ≥ PREVIEW_MIN_W.
+  const resizeEditor = (dx: number) => {
+    setEditorWidth((w) => {
+      const container = bodyRef.current?.getBoundingClientRect().width ?? window.innerWidth
+      const avail = container - (navCollapsed ? NAV_COLLAPSED_W : navWidth)
+      const minW = EDITOR_MIN_FLOOR
+      const maxW = Math.max(minW, avail - PREVIEW_MIN_W)
+      return clampW(w + dx, minW, maxW)
+    })
+  }
+
   useEffect(() => {
     if (original && !draft) setDraft(original)
   }, [original, draft])
+
+  useEffect(() => {
+    window.localStorage.setItem(LS_NAV_W, String(navWidth))
+  }, [navWidth])
+  useEffect(() => {
+    window.localStorage.setItem(LS_EDITOR_W, String(editorWidth))
+  }, [editorWidth])
+  useEffect(() => {
+    window.localStorage.setItem(LS_NAV_COLLAPSED, navCollapsed ? '1' : '0')
+  }, [navCollapsed])
 
   const dirty = useMemo(() => {
     if (!draft || !original) return false
@@ -240,13 +288,32 @@ export function CourseEditorPage() {
         <SaveButton state={saveState} onClick={onSave} savedAt={savedAt} />
       </header>
 
-      {/* BODY: 3-pane */}
-      <div className="flex-1 min-h-0 flex overflow-hidden">
+      {/* BODY: 3-pane — menu | ô soạn | preview, kéo chỉnh độ rộng */}
+      <div ref={bodyRef} className="flex-1 min-h-0 flex overflow-hidden">
         {!fullscreen && (
           <>
-            <CourseSectionNav current={section} onChange={setSection} />
+            {/* MENU MỤC (kéo rộng / thu gọn về icon) */}
+            <div
+              style={{ width: navCollapsed ? NAV_COLLAPSED_W : navWidth }}
+              className="shrink-0 overflow-hidden"
+            >
+              <CourseSectionNav
+                current={section}
+                onChange={setSection}
+                collapsed={navCollapsed}
+                onToggleCollapse={() => setNavCollapsed((c) => !c)}
+              />
+            </div>
+            <ResizeHandle
+              disabled={navCollapsed}
+              onDrag={(dx) => setNavWidth((w) => clampW(w + dx, 160, 360))}
+            />
 
-            <div className="w-[500px] shrink-0 border-r border-[#E5E7EB] bg-white overflow-y-auto">
+            {/* Ô SOẠN (kéo rộng) */}
+            <div
+              style={{ width: editorWidth }}
+              className="shrink-0 bg-white overflow-y-auto"
+            >
               <div className="px-5 py-4 border-b border-[#E5E7EB] sticky top-0 bg-white z-10">
                 <h3 className="text-sm font-semibold text-[#111827]">{LABEL[section]}</h3>
                 <p className="text-[11px] text-[#6B7280] mt-0.5">Chỉnh sửa nội dung — xem trước cập nhật ngay bên phải.</p>
@@ -261,9 +328,11 @@ export function CourseEditorPage() {
                 />
               </div>
             </div>
+            <ResizeHandle onDrag={resizeEditor} />
           </>
         )}
 
+        {/* PREVIEW (lấy phần còn lại) */}
         <div className="flex-1 min-w-0 overflow-y-auto bg-[#E5E7EB]/40 py-6">
           <CourseRealPreview content={previewContent} device={device} highlight={navToHighlight(section)} />
         </div>
