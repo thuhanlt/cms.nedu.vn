@@ -1,221 +1,299 @@
-import type { Course, CourseContent } from '@modules/courses/types/course'
+import type {
+  CourseEditableContent,
+  CourseLearningType,
+  CourseDelivery,
+  CourseStatus,
+  CourseRun,
+} from '@modules/courses/types/course'
 import { nowIso } from './_helpers'
 
-export function blankCourseContent(): CourseContent {
+// ─────────────────────────────────────────────────────────────────────────────
+// Mock cho /cms/courses (CourseCmsResponse) + /cms/courses/:id/runs.
+// Shape khớp BE: snake_case, metadata = CourseEditableContent inline.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface CourseRow {
+  id: string
+  code: string
+  slug: string
+  name: string
+  short_label: string | null
+  tagline: string | null
+  description: string | null
+  delivery_mode: string
+  learning_format: string
+  learning_type: CourseLearningType
+  delivery: CourseDelivery
+  segment: string
+  status: CourseStatus
+  is_public: boolean
+  display_order: number
+  cover_image_url: string | null
+  og_image_url: string | null
+  metadata: CourseEditableContent
+  created_at: string
+  updated_at: string
+  archived_at: string | null
+}
+
+export function blankCourseContent(): CourseEditableContent {
   return {
-    heroDesktop: '',
-    heroMobile: '',
-    badges: {
-      b1: { value: '', auto: true },
-      b2: { value: '', auto: true },
-      b3: '',
+    content_published: false,
+    test_widget_enabled: true,
+    hero: { title: '', subtitle: '', badges: [], meta: [] },
+    card: {
+      name: '',
+      type_label: '',
+      type_tag: 'khoa-hoc-theo-nhom',
+      format_label: '',
+      schedule_label: '',
+      short_description: '',
+      image: '',
+      instructor_short: '',
     },
-    subTitle: '',
-    type: 'retreat',
-    format: 'offline',
-    startDate: '',
-    endDate: '',
-    testWidgetEnabled: true,
-    outcomesTitle: 'Bạn sẽ học được gì',
-    outcomesSub: '6 năng lực cốt lõi sau khi hoàn thành khoá học.',
+    sidebar: { price_label: '', checklist: [] },
     outcomes: [],
-    curriculumTitle: 'Chương trình học',
-    curriculumSub: '4 module — từng bước có chủ đích.',
     curriculum: [],
-    instructorsTitle: 'Người dẫn đường',
-    instructorsSub: 'Đồng hành cùng bạn qua từng buổi học.',
-    instructors: [],
-    reviewsSub: 'Từ các khoá Là Chính Mình K3, K4',
-    reviews: [],
-    pricing: {
-      label: '',
-      labelAuto: true,
-      price: '',
-      note: '',
-      urgency: '',
-      features: [],
-      promo: {
-        enabled: false,
-        startDate: '',
-        endDate: '',
-        tab: 'discount',
-        priceOriginal: '',
-        priceFinal: '',
-        bonusCourse: '',
-        discountDesc: '',
-        giftTitle: '',
-        merchList: '',
-        giftDesc: '',
-      },
-    },
-    qaTitle: 'Câu hỏi thường gặp',
-    qa: [],
+    instructor: { name: '', title: '', initial: '', tags: [], bio: '' },
+    co_instructors: [],
+    reviews: { rating_overall: 5, rating_count: 0, items: [] },
   }
 }
 
-function laChinhMinhContent(): CourseContent {
+function laChinhMinhContent(): CourseEditableContent {
   return {
-    heroDesktop: '',
-    heroMobile: '',
-    badges: {
-      b1: { value: 'RETREAT · LÀ CHÍNH MÌNH 5', auto: true },
-      b2: { value: 'KHOÁ 5', auto: true },
-      b3: '',
+    content_published: true,
+    test_widget_enabled: true,
+    hero: {
+      title: 'Là Chính Mình',
+      subtitle:
+        'Hành trình 3.5 ngày đánh thức sức mạnh nội tại, giúp bạn gỡ bỏ những rào cản tâm lý để sống một cuộc đời rực rỡ và trọn vẹn nhất.',
+      badges: [
+        { label: 'Khoá học chuyên sâu', variant: 'amber' },
+        { label: 'Khoá 05', variant: 'amber' },
+        { label: 'Đang mở đăng ký', variant: 'open' },
+      ],
+      meta: [
+        { label: 'Thời lượng', value: '3.5 ngày' },
+        { label: 'Hình thức', value: 'Offline · Retreat' },
+        { label: 'Khai giảng', value: '27 / 08 / 2026' },
+      ],
     },
-    subTitle:
-      'Hành trình 4 ngày để hiểu rõ bản thân, làm chủ cảm xúc và thiết kế cuộc sống có chủ đích — cùng cộng đồng 15-20 người không phán xét.',
-    type: 'retreat',
-    format: 'offline',
-    startDate: '2026-08-27',
-    endDate: '2026-08-30',
-    testWidgetEnabled: true,
-    outcomesTitle: 'Bạn sẽ học được gì',
-    outcomesSub: '6 năng lực cốt lõi sau khi hoàn thành khoá học.',
+    card: {
+      name: 'Là Chính Mình',
+      type_label: 'Khoá học chuyên sâu',
+      type_tag: 'khoa-hoc-chuyen-sau',
+      format_label: 'Offline',
+      schedule_label: 'Tháng 8/2026',
+      short_description:
+        'Hành trình 3.5 ngày đánh thức sức mạnh nội tại, gỡ rào cản tâm lý để sống rực rỡ.',
+      image: '',
+      instructor_short: 'NhiLe x Guest Instructors',
+    },
+    sidebar: {
+      price_label: 'Bao gồm ăn ở 3.5 ngày + tài liệu + cộng đồng alumni LCM',
+      checklist: [
+        'Ăn ở 3.5 ngày tại retreat venue (Đà Nẵng)',
+        'Toàn bộ tài liệu khoá học (worksheet, journal)',
+        'Buổi 1:1 với mentor 60 phút trong khoá',
+        'Tham gia cộng đồng alumni LCM (Zalo + monthly meetup)',
+        'Học lại miễn phí ở khoá LCM kế tiếp',
+      ],
+    },
     outcomes: [
-      { icon: '◎', title: 'Biết mình thực sự là ai', desc: 'Hiểu rõ giá trị cốt lõi, điểm mạnh và điểm yếu — không phải qua lời người khác nói.' },
-      { icon: '♡', title: 'Làm chủ cảm xúc của mình', desc: 'Nhận diện và làm việc cùng cảm xúc thay vì né tránh hay bị cuốn đi.' },
-      { icon: '◷', title: 'Thoát khỏi vòng lặp do dự', desc: 'Ra quyết định rõ ràng hơn, chọn đúng hướng đi cho mình — không phải cho ai khác.' },
-      { icon: '⌇', title: 'Có bản thiết kế cuộc sống', desc: 'Hình dung được mình muốn sống thế nào trong 1–3 năm tới.' },
-      { icon: '◉', title: 'Sống có chủ đích hơn', desc: 'Mỗi ngày là lựa chọn có ý thức, không còn chạy theo quán tính.' },
-      { icon: '⦿', title: 'Thuộc về một cộng đồng thật', desc: 'Kết nối với 15–20 người cùng hành trình — không phán xét, không giả tạo.' },
+      { icon: 'target', title: 'Hiểu rõ sức mạnh nội tại', desc: 'Nhận diện và đánh thức tiềm năng đang ngủ quên trong chính bạn.' },
+      { icon: 'heart', title: 'Gỡ bỏ rào cản tâm lý', desc: 'Xác định và xử lý những niềm tin giới hạn đang chặn bạn lại.' },
+      { icon: 'check', title: 'Sống đúng với giá trị thật', desc: 'Tách rời kỳ vọng người khác và biết điều gì thực sự quan trọng với mình.' },
+      { icon: 'clock', title: 'Quyết định không lưỡng lự', desc: 'Framework ra quyết định lớn dựa trên la bàn nội tâm rõ ràng.' },
+      { icon: 'users', title: 'Cộng đồng alumni đồng hành', desc: 'Kết nối với học viên các kỳ trước — hỗ trợ nhau dài hạn sau khoá.' },
+      { icon: 'chart', title: 'Roadmap 90 ngày hành động', desc: 'Rời retreat với kế hoạch cụ thể, không quay về cuộc sống cũ.' },
     ],
-    curriculumTitle: 'Chương trình học',
-    curriculumSub: '4 module — từng bước có chủ đích.',
     curriculum: [
       {
-        title: 'Ngày 1 — Nhận Diện Bản Thân & Trưởng Thành Nội Tâm',
-        meta: 'Ngày 1 · Full day',
+        week: 1,
+        title: 'Ngày 1 · Mở lòng và quan sát',
+        duration_label: 'Sáng + chiều · 6h',
         topics: [
-          'Nhìn lại cách bạn ra quyết định, hợp tác và phản ứng trước biến cố',
-          'Hiểu các nguyên tắc xây dựng và gìn giữ lòng tin',
-          'Nắm công thức trưởng thành và hai con đường phát triển bản thân',
-        ].join('\n'),
+          'Phá vỡ khoảng cách — nhóm 60 người, vòng tròn chia sẻ đầu tiên',
+          'Bài tập quan sát bản thân — bạn đang ở đâu trong cuộc đời?',
+          'Bản đồ cảm xúc trong 30 ngày gần nhất',
+          'Câu hỏi nền tảng: Điều gì khiến bạn đến đây hôm nay?',
+        ],
       },
-      { title: 'Ngày 2 — Tài Chính, Mục Tiêu & Hiểu Chính Mình', meta: 'Ngày 2 · Full day', topics: '' },
-      { title: 'Ngày 3 — Gia Đình, Gốc Rễ & Buông Bỏ', meta: 'Ngày 3 · Full day', topics: '' },
-      { title: 'Ngày 4 — Tương Lai, Hành Động & Cộng Đồng', meta: 'Ngày 4 · Full day', topics: '' },
-    ],
-    instructorsTitle: 'Người dẫn đường',
-    instructorsSub: 'Đồng hành cùng bạn qua từng buổi học.',
-    instructors: [
       {
-        name: 'Nhi Lê',
-        title: 'Coach · Facilitator · Founder NhiLe Holdings',
-        avatarUrl: '',
-        tags: 'ICF Certified Coach, Applied Psychology, Business Sustainability',
-        intro: 'Nhi Lê là người dẫn dắt hành trình tìm về chính mình cho hàng nghìn học viên trẻ trên khắp Việt Nam.',
-        education:
-          'Nhi Lê có nền tảng học thuật bài bản — Applied Psychology + Business Sustainability + ICF Certified Coaching, cộng thêm 10+ năm coaching cá nhân hoá.',
-        career: [
-          '- YouTube Nhi Le · 500K+ subscribers',
-          '- NhiLe Team · vận hành 6 platform giáo dục cho người trưởng thành',
-          '- NhiLe Foundation · 100+ học bổng cho nữ founder',
-          '- Ms Nhi podcast · top 10 podcast giáo dục Việt Nam',
-        ].join('\n'),
-        awards: ['2025-04 | HER Courage Awards 2025', '2025-08 | YouTube global blog appearance'].join('\n'),
+        week: 2,
+        title: 'Ngày 2 · Soi vào bóng tối',
+        duration_label: 'Sáng + chiều + tối · 9h',
+        topics: [
+          'Khoa học não bộ về niềm tin giới hạn (limiting beliefs)',
+          'Truy ngược về nguồn — đâu là gốc của những rào cản hiện tại',
+          'Bài tập "ghế nóng" — đối thoại với bản thân qua các vai trò',
+          'Đêm yên — viết thư cho phiên bản 5 năm sau của mình',
+        ],
       },
+      {
+        week: 3,
+        title: 'Ngày 3 · Tái thiết kế',
+        duration_label: 'Sáng + chiều · 8h',
+        topics: [
+          'Vision board cho 3 vùng đời (sự nghiệp · quan hệ · sức khoẻ)',
+          'Habit design từ khoa học thần kinh',
+          'Tài chính lành mạnh — câu chuyện về tiền và giá trị',
+          'Buổi 1:1 với mentor — feedback cá nhân hoá',
+        ],
+      },
+    ],
+    instructor: {
+      name: 'Nhi Le',
+      title: 'Doanh nhân · Cố vấn tâm lý',
+      initial: 'N',
+      tags: ['Tâm lý học', 'Coaching', 'Lãnh đạo', 'Retreat facilitator'],
+      bio: 'Nhi Le là cố vấn tâm lý và doanh nhân, đồng hành cùng nhiều người Việt trong hành trình hiểu bản thân, xây dựng nội lực và tạo ra thay đổi bền vững.',
+      education:
+        'Nhi Le có nền tảng học thuật bài bản trong tâm lý học, coaching và lãnh đạo, với các chứng chỉ chuyên môn từ Kaplan Singapore và Singapore Management University (SMU).',
+      career_intro:
+        'Sinh ra và lớn lên tại Quảng Nam, hiện là mẹ đơn thân sống và làm việc ở nước ngoài, Nhi Le mang đến góc nhìn rất thực tế về tự lập, kỷ luật cá nhân và trách nhiệm với chính cuộc sống của mình.',
+      career_bullets: [
+        { label: 'Kênh YouTube Nhi Le', desc: 'Kênh tiên phong chia sẻ kiến thức tâm lý học bằng tiếng Việt.' },
+        { label: 'Cộng đồng NhiLe Team', desc: 'Đào tạo nghề và kỹ năng cần thiết cho giới trẻ.' },
+      ],
+      achievements: [
+        { date: '2025-04', text: 'Vinh danh với giải thưởng HER Courage Awards 2025.' },
+        { date: '2025-08', text: 'Người phụ nữ Việt Nam đầu tiên xuất hiện trên blog chính thức của YouTube toàn cầu.' },
+      ],
+    },
+    co_instructors: [
       {
         name: 'Alex Low',
         title: 'Phong Thuỷ Practitioner · Dahann I-Ching Consultancy',
-        avatarUrl: '',
-        tags: 'Phong Thuỷ, Tư vấn doanh nghiệp, Diễn giả quốc tế',
-        intro: 'Hơn 20 năm thực hành Phong Thuỷ và Kinh Dịch ứng dụng cho doanh nghiệp châu Á.',
-        education: '',
-        career: '',
-        awards: '',
-      },
-      {
-        name: 'Denise Wong',
-        title: 'Speaker · Talkshow Host · Spice & Nice',
-        avatarUrl: '',
-        tags: 'Tâm lý học, Sáng tạo nội dung, Truyền cảm hứng',
-        intro: '',
-        education: '',
-        career: ['- Sip and Share', '- Growth is a Bit of a B*tch', '- Spice & Nice channel'].join('\n'),
-        awards: '',
+        initial: 'A',
+        tags: ['Phong Thuỷ', 'Tư vấn doanh nghiệp', 'Diễn giả quốc tế'],
+        bio: 'Hơn 20 năm thực hành Phong Thuỷ và Kinh Dịch ứng dụng cho doanh nghiệp châu Á.',
       },
     ],
-    reviewsSub: 'Từ các khoá Là Chính Mình K3, K4',
-    reviews: [
-      {
-        name: 'Cẩm Nhung',
-        cohort: 'Là Chính Mình 5',
-        text: 'Sau 4 ngày khoá học, mình nhận ra mình đã sống cuộc đời của ba mẹ suốt 28 năm. Không phải mình ghét điều đó — chỉ là mình chưa từng tự hỏi mình muốn gì.',
-        avatarUrl: '',
-      },
-      {
-        name: 'Nhi Pi',
-        cohort: 'Là Chính Mình 5',
-        text: 'Mình đến với cảm giác bế tắc, mệt mỏi. Ra về với 1 cuốn sổ tay đầy ý tưởng và một cộng đồng để đi tiếp.',
-        avatarUrl: '',
-      },
-      {
-        name: 'Tâm Như',
-        cohort: 'Là Chính Mình 5',
-        text: 'Nhi và team tạo không gian an toàn để mình được nói thật. Mình không nghĩ trong 4 ngày mình lại thay đổi nhiều đến thế.',
-        avatarUrl: '',
-      },
-    ],
-    pricing: {
-      label: 'Học phí · Là Chính Mình 5',
-      labelAuto: true,
-      price: '68.690.000đ',
-      note: 'Bao gồm 4 ngày học + tài liệu + cộng đồng Là Chính Mình',
-      urgency: 'Còn 30 suất',
-      features: [
-        '4 ngày học cùng Nhi Le, Alex Low, Denise Wong',
-        'Toàn bộ tài liệu khoá học (worksheet, journal)',
-        'Tham gia cộng đồng Là Chính Mình (15–20 người/khoá)',
-        'Kết nối alumni dài hạn sau khoá',
-        'Học lại miễn phí kỳ kế tiếp',
+    reviews: {
+      rating_overall: 4.9,
+      rating_count: 87,
+      items: [
+        {
+          author: 'Minh Châu',
+          role: 'Founder, Studio M',
+          cohort: 'LCM 04',
+          rating: 5,
+          title: 'Một quyết định thay đổi cách tôi sống',
+          body: '3.5 ngày này là một trong những quyết định tốt nhất tôi từng làm cho chính mình. Rời retreat tôi không cần ai khác xác nhận mình là ai nữa.',
+        },
+        {
+          author: 'Thanh Hà',
+          role: 'Product Manager',
+          cohort: 'LCM 03',
+          rating: 5,
+          title: 'Vượt xa mong đợi',
+          body: 'Tôi đến với hy vọng "tìm thấy động lực". Rời đi với một khung tư duy mới về chính mình. Khoá học thật sự sâu, không phải self-help bề mặt.',
+        },
+        {
+          author: 'Đức Anh',
+          role: 'Tech Lead',
+          cohort: 'LCM 04',
+          rating: 5,
+          body: 'Chưa bao giờ ngồi yên với chính mình 3 ngày liền. Khó, nhưng đáng. Nhi và team facilitator giữ không gian rất an toàn để mình mở lòng.',
+        },
+        {
+          author: 'Lan Phương',
+          role: 'Designer',
+          cohort: 'LCM 04',
+          rating: 5,
+          body: 'Một không gian hiếm hoi để thật sự dừng lại và lắng nghe chính mình.',
+        },
       ],
-      promo: {
-        enabled: false,
-        startDate: '',
-        endDate: '',
-        tab: 'discount',
-        priceOriginal: '',
-        priceFinal: '',
-        bonusCourse: '',
-        discountDesc: '',
-        giftTitle: '',
-        merchList: '',
-        giftDesc: '',
-      },
     },
-    qaTitle: 'Câu hỏi thường gặp',
-    qa: [
-      {
-        q: 'Khoá học có hoàn tiền không?',
-        a: 'Trong 7 ngày đầu sau khi đăng ký, bạn có thể yêu cầu hoàn tiền 100%. Sau khi khoá bắt đầu, học phí không hoàn lại.',
-      },
-      {
-        q: 'Mình không có nền tảng gì có học được không?',
-        a: 'Có. Khoá thiết kế cho người trưởng thành ở mọi giai đoạn — chỉ cần bạn sẵn sàng nhìn lại chính mình.',
-      },
-      {
-        q: 'Học phí bao gồm gì?',
-        a: '4 ngày học, toàn bộ tài liệu, ăn nhẹ giờ giải lao, và quyền tham gia cộng đồng alumni.',
-      },
-    ],
   }
 }
 
-export const courses: Course[] = [
+export const courses: CourseRow[] = [
   {
-    id: 'co-la-chinh-minh-5',
-    slug: 'la-chinh-minh-5',
-    name: 'Là Chính Mình 5',
-    published: true,
-    content: laChinhMinhContent(),
-    updatedAt: nowIso(),
+    id: 'co-la-chinh-minh-05',
+    code: 'LCM',
+    slug: 'la-chinh-minh-05',
+    name: 'Là Chính Mình K5',
+    short_label: 'LCM K5',
+    tagline: 'Hành trình 3.5 ngày tìm về chính mình.',
+    description: 'Khoá retreat chuyên sâu giúp gỡ rào cản tâm lý và sống có chủ đích.',
+    delivery_mode: 'offline',
+    learning_format: 'retreat',
+    learning_type: 'cohort',
+    delivery: 'offline',
+    segment: 'adult',
+    status: 'published',
+    is_public: true,
+    display_order: 0,
+    cover_image_url: '',
+    og_image_url: '',
+    metadata: laChinhMinhContent(),
+    created_at: nowIso(),
+    updated_at: nowIso(),
+    archived_at: null,
   },
   {
     id: 'co-cuoc-song-2',
+    code: 'CSCB',
     slug: 'cuoc-song-cua-ban-2',
     name: 'Cuộc Sống Của Bạn 2',
-    published: false,
-    content: { ...blankCourseContent(), subTitle: 'Khoá học 6 tuần thiết kế cuộc sống.', startDate: '2026-10-01', endDate: '2026-11-15' },
-    updatedAt: nowIso(),
+    short_label: 'CSCB 2',
+    tagline: 'Khoá học 6 tuần thiết kế cuộc sống.',
+    description: '',
+    delivery_mode: 'online',
+    learning_format: 'cohort',
+    learning_type: 'cohort',
+    delivery: 'online',
+    segment: 'adult',
+    status: 'draft',
+    is_public: false,
+    display_order: 1,
+    cover_image_url: '',
+    og_image_url: '',
+    metadata: {
+      ...blankCourseContent(),
+      hero: { title: 'Cuộc Sống Của Bạn 2', subtitle: 'Khoá học 6 tuần thiết kế cuộc sống.', badges: [], meta: [] },
+      card: {
+        ...blankCourseContent().card,
+        name: 'Cuộc Sống Của Bạn 2',
+        type_label: 'Khoá học theo nhóm',
+        type_tag: 'khoa-hoc-theo-nhom',
+        format_label: 'Online',
+        schedule_label: 'Tháng 10/2026',
+        short_description: 'Khoá học 6 tuần thiết kế cuộc sống.',
+      },
+    },
+    created_at: nowIso(),
+    updated_at: nowIso(),
+    archived_at: null,
+  },
+]
+
+export const courseRuns: CourseRun[] = [
+  {
+    id: 'run-lcm-05',
+    course_id: 'co-la-chinh-minh-05',
+    code: 'LCM-R5',
+    run_no: 5,
+    label: 'Khoá 05 · Đà Nẵng',
+    start_date: '2026-08-27',
+    end_date: '2026-08-30',
+    enrollment_open_at: '2026-06-01',
+    enrollment_close_at: '2026-08-20',
+    delivery_mode: 'offline',
+    venue: 'Retreat venue Đà Nẵng',
+    capacity: 64,
+    enrolled_count: 32,
+    status: 'enrollment_open',
+    base_price_vnd: 68_690_000,
+    currency: 'VND',
+    deposit_type: 'fixed',
+    deposit_value: 10_000_000,
+    balance_due_days: 14,
+    metadata: {},
+    created_at: nowIso(),
+    updated_at: nowIso(),
   },
 ]

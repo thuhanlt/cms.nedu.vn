@@ -1,9 +1,9 @@
-import type { CourseContent } from '../../types/course'
+import type { CourseEditableContent } from '../../types/course'
 import { SectionNote } from './Field'
 
 interface Props {
-  content: CourseContent
-  onContentChange: (patch: Partial<CourseContent>) => void
+  content: CourseEditableContent
+  onContentChange: (patch: Partial<CourseEditableContent>) => void
 }
 
 export function TestWidgetSection({ content, onContentChange }: Props) {
@@ -17,8 +17,8 @@ export function TestWidgetSection({ content, onContentChange }: Props) {
       <label className="flex items-start gap-3 p-4 rounded-lg border border-[#E5E7EB] bg-[#F7F8FA] cursor-pointer">
         <input
           type="checkbox"
-          checked={content.testWidgetEnabled}
-          onChange={(e) => onContentChange({ testWidgetEnabled: e.target.checked })}
+          checked={content.test_widget_enabled}
+          onChange={(e) => onContentChange({ test_widget_enabled: e.target.checked })}
           className="w-4 h-4 mt-0.5 accent-[#2D6A8C]"
         />
         <div>

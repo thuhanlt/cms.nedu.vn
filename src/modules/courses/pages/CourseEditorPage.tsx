@@ -2,41 +2,123 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Monitor, Smartphone, Maximize2, Minimize2 } from 'lucide-react'
 import { useCourse, useUpdateCourse } from '../hooks/useCourses'
-import { CourseSectionNav, type CourseSectionKey } from '../components/CourseSectionNav'
-import { CoursePreview } from '../components/preview/CoursePreview'
-import { HeroBgSection } from '../components/editor/HeroBgSection'
+import { useCourseRuns } from '../hooks/useCourseRuns'
+import { CourseSectionNav, navToHighlight, type CourseSectionKey } from '../components/CourseSectionNav'
+import { CourseRealPreview } from '../preview/CourseRealPreview'
+import { CardSection } from '../components/editor/CardSection'
 import { HeroSection } from '../components/editor/HeroSection'
 import { TestWidgetSection } from '../components/editor/TestWidgetSection'
 import { OutcomesSection } from '../components/editor/OutcomesSection'
 import { CurriculumSection } from '../components/editor/CurriculumSection'
 import { InstructorsSection } from '../components/editor/InstructorsSection'
 import { ReviewsSection } from '../components/editor/ReviewsSection'
-import { PriceSection } from '../components/editor/PriceSection'
-import { QASection } from '../components/editor/QASection'
+import { PricingSidebarSection } from '../components/editor/PricingSidebarSection'
+import { RunsSection } from '../components/editor/RunsSection'
 import { SaveButton, type SaveState } from '@shared/components/SaveButton'
 import { Skeleton } from '@shared/components/Skeleton'
 import { toast } from '@shared/stores/useToastStore'
-import type { Course, CourseContent } from '../types/course'
+import type { Course, CourseEditableContent, CourseRun } from '../types/course'
+import type { CourseContent, CourseStatus as PreviewStatus } from '../preview/courseContent.schema'
 
 const LABEL: Record<CourseSectionKey, string> = {
-  'hero-bg': 'Ảnh bìa khoá học',
-  'hero': 'Phần Hero',
-  'test-widget': 'Test widget cá nhân hoá',
-  'outcomes': 'Bạn sẽ học được gì',
-  'curriculum': 'Chương trình học',
-  'instructors': 'Người dẫn đường',
-  'reviews': 'Học viên nói gì',
-  'price': 'Học phí & Lịch khai giảng',
-  'qa': 'Câu hỏi thường gặp',
+  card: 'Card listing',
+  hero: 'Phần Hero',
+  test: 'Test widget cá nhân hoá',
+  outcomes: 'Bạn sẽ học được gì',
+  curriculum: 'Chương trình học',
+  instructors: 'Người dẫn đường',
+  reviews: 'Học viên nói gì',
+  pricing: 'Giá & Quyền lợi',
+  runs: 'Lịch khai giảng',
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// draftToCourseContent — build CourseContent (render contract) từ Course + run.
+//   - card/hero/sidebar/outcomes/instructor/co_instructors/reviews: map thẳng.
+//   - curriculum[].week → Module.num (pad 2), duration_label → Module.meta.
+//   - commerce: lấy từ run đang chọn (run sắp tới gần nhất) → giá / suất / ngày.
+//     Không có run → commerce rỗng (giá 0, không suất).
+// ─────────────────────────────────────────────────────────────────────────────
+// run.status (BE enum) → nedu.vn CourseStatus ('open'|'closed'|'coming_soon').
+function runStatusToCommerce(run: CourseRun | undefined): PreviewStatus {
+  if (!run) return 'coming_soon'
+  switch (run.status) {
+    case 'enrollment_open':
+      return 'open'
+    case 'enrollment_closed':
+    case 'completed':
+    case 'cancelled':
+      return 'closed'
+    case 'planned':
+    case 'running':
+    default:
+      return 'coming_soon'
+  }
+}
+
+/** Chọn run feed sidebar: ưu tiên run còn hiệu lực sớm nhất (open/scheduled), fallback run đầu. */
+function pickActiveRun(runs: CourseRun[]): CourseRun | undefined {
+  if (runs.length === 0) return undefined
+  const upcoming = runs
+    .filter((r) => r.status !== 'cancelled' && r.status !== 'completed')
+    .sort((a, b) => (a.start_date ?? '').localeCompare(b.start_date ?? ''))
+  return upcoming[0] ?? runs[0]
+}
+
+export function draftToCourseContent(course: Course, run?: CourseRun): CourseContent {
+  const c = course.content
+  return {
+    slug: course.slug,
+    code: course.code,
+    test_widget_enabled: c.test_widget_enabled,
+    card: c.card,
+    hero: {
+      ...c.hero,
+      title: c.hero.title || course.name,
+    },
+    commerce: {
+      base_price_vnd_net: run?.base_price_vnd ?? 0,
+      seats_total: run?.capacity ?? null,
+      seats_remaining:
+        run && run.capacity != null ? Math.max(0, run.capacity - run.enrolled_count) : null,
+      start_date: run?.start_date ?? null,
+      registration_deadline: run?.enrollment_close_at ?? null,
+      status: runStatusToCommerce(run),
+    },
+    sidebar: c.sidebar,
+    // Editor lưu avatar dưới key `avatar_url` (CMS metadata DTO); preview render
+    // theo key `photo_url` → bắc cầu avatar_url → photo_url tại đây.
+    instructor: { ...c.instructor, photo_url: c.instructor.avatar_url },
+    co_instructors: c.co_instructors.map((ci) => ({
+      ...ci,
+      photo_url: ci.avatar_url,
+    })),
+    outcomes: c.outcomes,
+    modules: c.curriculum.map((m) => ({
+      num: String(m.week).padStart(2, '0'),
+      title: m.title,
+      meta: m.duration_label,
+      topics: m.topics,
+    })),
+    // Review avatar: key contract avatar_url → key render author_photo_url.
+    reviews: {
+      ...c.reviews,
+      items: c.reviews.items.map((r) => ({
+        ...r,
+        author_photo_url: r.avatar_url,
+      })),
+    },
+  }
 }
 
 export function CourseEditorPage() {
   const { id } = useParams<{ id: string }>()
   const { data: original, isLoading } = useCourse(id)
+  const { data: runs } = useCourseRuns(id)
   const update = useUpdateCourse()
 
   const [draft, setDraft] = useState<Course | null>(null)
-  const [section, setSection] = useState<CourseSectionKey>('hero-bg')
+  const [section, setSection] = useState<CourseSectionKey>('card')
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
   const [fullscreen, setFullscreen] = useState(false)
   const [saveState, setSaveState] = useState<SaveState>('idle')
@@ -51,12 +133,28 @@ export function CourseEditorPage() {
     return JSON.stringify(draft) !== JSON.stringify(original)
   }, [draft, original])
 
+  const activeRun = useMemo(() => pickActiveRun(runs ?? []), [runs])
+
+  const previewContent = useMemo(
+    () => (draft ? draftToCourseContent(draft, activeRun) : null),
+    [draft, activeRun],
+  )
+
   const onChange = (patch: Partial<Course>) => {
     setDraft((d) => (d ? { ...d, ...patch } : d))
     if (saveState === 'saved') setSaveState('idle')
   }
-  const onContentChange = (patch: Partial<CourseContent>) => {
+  const onContentChange = (patch: Partial<CourseEditableContent>) => {
     setDraft((d) => (d ? { ...d, content: { ...d.content, ...patch } } : d))
+    if (saveState === 'saved') setSaveState('idle')
+  }
+
+  const onTogglePublish = (next: boolean) => {
+    setDraft((d) =>
+      d
+        ? { ...d, published: next, is_public: next, content: { ...d.content, content_published: next } }
+        : d,
+    )
     if (saveState === 'saved') setSaveState('idle')
   }
 
@@ -79,7 +177,7 @@ export function CourseEditorPage() {
     }
   }
 
-  if (isLoading || !draft) {
+  if (isLoading || !draft || !previewContent) {
     return (
       <div className="p-6 space-y-3">
         <Skeleton height={28} width={240} />
@@ -107,7 +205,7 @@ export function CourseEditorPage() {
           <input
             type="checkbox"
             checked={draft.published}
-            onChange={(e) => onChange({ published: e.target.checked })}
+            onChange={(e) => onTogglePublish(e.target.checked)}
             className="accent-[#2D6A8C]"
           />
           <span className="text-[11px] text-[#374151]">{draft.published ? 'Đã đăng' : 'Nháp'}</span>
@@ -154,14 +252,20 @@ export function CourseEditorPage() {
                 <p className="text-[11px] text-[#6B7280] mt-0.5">Chỉnh sửa nội dung — xem trước cập nhật ngay bên phải.</p>
               </div>
               <div className="p-5">
-                <SectionEditor section={section} draft={draft} onChange={onChange} onContentChange={onContentChange} />
+                <SectionEditor
+                  section={section}
+                  draft={draft}
+                  courseId={id ?? ''}
+                  onChange={onChange}
+                  onContentChange={onContentChange}
+                />
               </div>
             </div>
           </>
         )}
 
         <div className="flex-1 min-w-0 overflow-y-auto bg-[#E5E7EB]/40 py-6">
-          <CoursePreview draft={draft} device={device} highlight={section} />
+          <CourseRealPreview content={previewContent} device={device} highlight={navToHighlight(section)} />
         </div>
       </div>
     </div>
@@ -171,20 +275,22 @@ export function CourseEditorPage() {
 function SectionEditor({
   section,
   draft,
+  courseId,
   onChange,
   onContentChange,
 }: {
   section: CourseSectionKey
   draft: Course
+  courseId: string
   onChange: (p: Partial<Course>) => void
-  onContentChange: (p: Partial<CourseContent>) => void
+  onContentChange: (p: Partial<CourseEditableContent>) => void
 }) {
   switch (section) {
-    case 'hero-bg':
-      return <HeroBgSection draft={draft} onContentChange={onContentChange} />
+    case 'card':
+      return <CardSection draft={draft} onChange={onChange} onContentChange={onContentChange} />
     case 'hero':
       return <HeroSection draft={draft} onChange={onChange} onContentChange={onContentChange} />
-    case 'test-widget':
+    case 'test':
       return <TestWidgetSection content={draft.content} onContentChange={onContentChange} />
     case 'outcomes':
       return <OutcomesSection content={draft.content} onContentChange={onContentChange} />
@@ -194,9 +300,9 @@ function SectionEditor({
       return <InstructorsSection content={draft.content} onContentChange={onContentChange} />
     case 'reviews':
       return <ReviewsSection content={draft.content} onContentChange={onContentChange} />
-    case 'price':
-      return <PriceSection draft={draft} onContentChange={onContentChange} />
-    case 'qa':
-      return <QASection content={draft.content} onContentChange={onContentChange} />
+    case 'pricing':
+      return <PricingSidebarSection content={draft.content} onContentChange={onContentChange} />
+    case 'runs':
+      return <RunsSection courseId={courseId} />
   }
 }
