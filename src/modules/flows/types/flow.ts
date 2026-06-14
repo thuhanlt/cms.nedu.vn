@@ -1,6 +1,8 @@
-// Types cho module "Workflow" (email workflow builder — nhóm "Tự động hoá").
-// snake_case theo API contract nedu-backend src/modules/email-workflow/
-// (workflows.controller.ts + workflow.types.ts) — giữ nguyên khi vào FE.
+// Types cho module "Flows" (luồng tự động builder — nhóm "Tự động hoá").
+// snake_case theo API contract nedu-backend src/modules/flows/
+// (flows.controller.ts + flow.types.ts) — giữ nguyên khi vào FE.
+// Lưu ý: type names internal (EmailWorkflow/WorkflowStep) GIỮ nguyên để giảm
+// churn — chỉ đổi tên sản phẩm/route/UI copy, KHÔNG đổi data shape.
 
 export type WorkflowStatus = 'draft' | 'enabled' | 'disabled'
 
@@ -65,7 +67,7 @@ export interface TriggerVar {
   sample: string
 }
 
-/** Entry GET /cms/email-workflows/trigger-catalog. */
+/** Entry GET /cms/flows/trigger-catalog. */
 export interface TriggerCatalogItem {
   event_key: string
   label: string

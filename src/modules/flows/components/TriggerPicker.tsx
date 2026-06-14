@@ -1,12 +1,12 @@
 // Grid chọn trigger cho panel phải "Chọn sự kiện bắt đầu" (mirror panel
 // "Choose a starter" của Google Workspace Flows — grid 2 cột card).
-// Data từ GET /cms/email-workflows/trigger-catalog.
-// Audience KHOÁ theo trigger (chốt an toàn NLH-NEDU-EMAIL-WORKFLOW-001 §2):
+// Data từ GET /cms/flows/trigger-catalog.
+// Audience KHOÁ theo trigger (chốt an toàn NLH-NEDU-FLOWS-001 §2):
 // chọn trigger là hệ thống tự biết gửi ai — không nhập người nhận tự do.
 import { AlertCircle, Zap } from 'lucide-react'
 import { EmptyState } from '@shared/components/EmptyState'
 import { Skeleton } from '@shared/components/Skeleton'
-import type { TriggerCatalogItem } from '../types/email-workflow'
+import type { TriggerCatalogItem } from '../types/flow'
 
 // (triggerClause sống ở builder-steps.ts — file này chỉ export component
 // để react-refresh hoạt động đúng.)

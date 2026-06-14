@@ -1,13 +1,13 @@
-// Seed mock cho module Workflow — khớp contract nedu-backend
-// src/modules/email-workflow/workflows.controller.ts (#198).
+// Seed mock cho module Flows — khớp contract nedu-backend
+// src/modules/flows/flows.controller.ts.
 // template_id tham chiếu EMAIL_TEMPLATES_SEED (data/email-templates.ts).
-import type { EmailWorkflow } from '@modules/email-workflows/types/email-workflow'
+import type { EmailWorkflow } from '@modules/flows/types/flow'
 
 // id template trong EMAIL_TEMPLATES_SEED
 const TPL_THANK_YOU = '3f9a1c20-5b7e-4d2a-9c41-8e6f0a2b1d34' // "Cảm ơn sau mua"
 const TPL_WEEK_ONE_TIPS = '9b5e3a72-4c8d-4f16-a0e9-2d7b6c1f4a58' // "Mẹo học tuần đầu"
 
-export const EMAIL_WORKFLOWS_SEED: EmailWorkflow[] = [
+export const FLOWS_SEED: EmailWorkflow[] = [
   {
     id: 'a7c41f88-2e5b-4d09-9f63-1b8e4a2c7d50',
     name: 'Chăm sóc sau mua',

@@ -1,9 +1,9 @@
 // Canvas trái của builder (mirror Google Workspace Flows): cột card dọc giữa
 // nền xanh-xám nhạt — starter card + action cards nối connector, kebab ⋮
-// (Lên trên / Xuống dưới / Xoá), nút pill "+ Thêm bước" dưới cùng.
-// CHỈ là lớp trình bày — mọi mutate đi qua callback từ WorkflowBuilderPage.
+// (Lên trên / Xuống dưới / Xoá), nút pill "+ Thêm node" dưới cùng.
+// CHỈ là lớp trình bày — mọi mutate đi qua callback từ FlowBuilderPage.
 import { ArrowDown, ArrowUp, Clock, Mail, Plus, RefreshCw, Timer, Trash2, Zap } from 'lucide-react'
-import { WORKFLOW_MAX_STEPS, type EmailTemplateOption } from '../types/email-workflow'
+import { WORKFLOW_MAX_STEPS, type EmailTemplateOption } from '../types/flow'
 import { isDelayStepValid, triggerClause, type BuilderStep } from './builder-steps'
 import { KebabMenu } from './KebabMenu'
 
@@ -20,7 +20,7 @@ export type CanvasStarter =
   /** date_anchor read-only: "⏱ trước 3 ngày ngày khai giảng" */
   | { type: 'anchor'; label: string }
 
-interface WorkflowCanvasProps {
+interface FlowCanvasProps {
   starter: CanvasStarter
   steps: BuilderStep[]
   templates: EmailTemplateOption[]
@@ -51,7 +51,7 @@ function Connector() {
   return <div className="mx-auto w-px h-5 bg-[#B7C7DC]" />
 }
 
-export function WorkflowCanvas({
+export function FlowCanvas({
   starter,
   steps,
   templates,
@@ -63,7 +63,7 @@ export function WorkflowCanvas({
   onAddStep,
   onMove,
   onRemove,
-}: WorkflowCanvasProps) {
+}: FlowCanvasProps) {
   const full = steps.length >= WORKFLOW_MAX_STEPS
   const starterSelected = selection.kind === 'starter' || selection.kind === 'starter-pick'
 
@@ -113,7 +113,7 @@ export function WorkflowCanvas({
             {starter.type === 'anchor' ? <Timer size={16} /> : <Zap size={16} />}
           </span>
           <div className="flex-1 min-w-0 text-sm text-[#111827] truncate">
-            Bước 1:{' '}
+            Node 1:{' '}
             {starter.type === 'anchor' ? (
               <span className="font-semibold">{starter.label}</span>
             ) : (
@@ -144,7 +144,7 @@ export function WorkflowCanvas({
       {steps.length === 0 && (
         <div className="rounded-2xl border border-dashed border-[#B7C7DC] px-4 py-3.5 text-center">
           <p className="text-xs text-[#5E718D]">
-            Chưa có bước nào — thường bắt đầu bằng <span className="font-medium">Gửi email</span>{' '}
+            Chưa có node nào — thường bắt đầu bằng <span className="font-medium">Gửi email</span>{' '}
             ngay khi sự kiện xảy ra.
           </p>
         </div>
@@ -186,7 +186,7 @@ export function WorkflowCanvas({
               </span>
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-[#111827] truncate">
-                  Bước {i + 2}:{' '}
+                  Node {i + 2}:{' '}
                   {isEmail ? (
                     selectedTemplate ? (
                       <>
@@ -212,7 +212,7 @@ export function WorkflowCanvas({
               </div>
               {!readOnly && (
                 <KebabMenu
-                  label={`Tuỳ chọn bước ${i + 2}`}
+                  label={`Tuỳ chọn node ${i + 2}`}
                   items={[
                     {
                       key: 'up',
@@ -252,7 +252,7 @@ export function WorkflowCanvas({
               type="button"
               onClick={onAddStep}
               disabled={full}
-              title={full ? `Đã đạt tối đa ${WORKFLOW_MAX_STEPS} bước` : 'Thêm bước vào cuối luồng'}
+              title={full ? `Đã đạt tối đa ${WORKFLOW_MAX_STEPS} node` : 'Thêm node vào cuối luồng'}
               className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm shadow-sm transition disabled:opacity-40 disabled:cursor-not-allowed ${
                 selection.kind === 'add'
                   ? 'bg-[#D3E3FD] border-[#A8C7FA] text-[#1A4F7E]'
@@ -260,11 +260,11 @@ export function WorkflowCanvas({
               }`}
             >
               <Plus size={15} />
-              Thêm bước
+              Thêm node
             </button>
             {full && (
               <p className="text-[11px] text-[#B45309] mt-1.5">
-                Đã đạt tối đa {WORKFLOW_MAX_STEPS} bước — xoá bớt để thêm bước mới.
+                Đã đạt tối đa {WORKFLOW_MAX_STEPS} node — xoá bớt để thêm node mới.
               </p>
             )}
           </div>

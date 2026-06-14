@@ -11,12 +11,12 @@ import { EmptyState } from '@shared/components/EmptyState'
 import { toast } from '@shared/stores/useToastStore'
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard'
 import {
-  useCreateWorkflow,
+  useCreateFlow,
   useEmailTemplateOptions,
-  useEmailWorkflow,
-  useUpdateWorkflow,
-  useWorkflowTriggerCatalog,
-} from '../hooks/useEmailWorkflows'
+  useFlow,
+  useUpdateFlow,
+  useFlowTriggerCatalog,
+} from '../hooks/useFlows'
 import {
   fromApiSteps,
   newDelayStep,
@@ -25,10 +25,10 @@ import {
   type BuilderStep,
 } from '../components/builder-steps'
 import {
-  WorkflowCanvas,
+  FlowCanvas,
   type CanvasSelection,
   type CanvasStarter,
-} from '../components/WorkflowCanvas'
+} from '../components/FlowCanvas'
 import {
   PanelAddStep,
   PanelChooseStarter,
@@ -37,13 +37,13 @@ import {
   PanelSendEmail,
   PanelStarterDetail,
 } from '../components/ConfigPanel'
-import { WorkflowStatusPill } from '../components/WorkflowStatusPill'
+import { FlowStatusPill } from '../components/FlowStatusPill'
 import {
   WORKFLOW_MAX_STEPS,
   WORKFLOW_NAME_MAX,
   type WorkflowStep,
   type WorkflowTrigger,
-} from '../types/email-workflow'
+} from '../types/flow'
 
 interface WorkflowDraft {
   name: string
@@ -70,19 +70,19 @@ function anchorLabels(anchor_key: string, offset_days: number) {
   return { anchorLabel, offsetLabel }
 }
 
-// Route: /dashboard/email-workflows/new (tạo) + /:id/edit (sửa) — cùng page.
-export function WorkflowBuilderPage() {
+// Route: /dashboard/flows/new (tạo) + /:id/edit (sửa) — cùng page.
+export function FlowBuilderPage() {
   const { id } = useParams<{ id: string }>()
   const isNew = !id
   const navigate = useNavigate()
 
-  const detailQ = useEmailWorkflow(id)
-  const catalogQ = useWorkflowTriggerCatalog()
+  const detailQ = useFlow(id)
+  const catalogQ = useFlowTriggerCatalog()
   const catalog = catalogQ.data ?? []
   const templatesQ = useEmailTemplateOptions()
 
-  const create = useCreateWorkflow()
-  const update = useUpdateWorkflow()
+  const create = useCreateFlow()
+  const update = useUpdateFlow()
 
   const [draft, setDraft] = useState<WorkflowDraft | null>(isNew ? { ...EMPTY_DRAFT } : null)
   const [nameError, setNameError] = useState<string | null>(null)
@@ -160,7 +160,7 @@ export function WorkflowBuilderPage() {
                   Thử lại
                 </button>
                 <Link
-                  to="/dashboard/email-workflows"
+                  to="/dashboard/flows"
                   className="px-3 py-1.5 rounded-md border border-[#D1D5DB] text-xs hover:bg-[#F7F8FA]"
                 >
                   Về danh sách
@@ -237,7 +237,7 @@ export function WorkflowBuilderPage() {
         toast.success('Đã lưu nháp — luồng chưa chạy cho tới khi bấm Kích hoạt')
         // /new và /:id/edit cùng component type ở cùng vị trí route — React
         // không remount khi navigate, draft/saveState giữ nguyên.
-        navigate(`/dashboard/email-workflows/${created.id}/edit`, { replace: true })
+        navigate(`/dashboard/flows/${created.id}/edit`, { replace: true })
         return
       }
       await update.mutateAsync({ id: id!, patch: { name: draft.name.trim(), ...base } })
@@ -258,11 +258,11 @@ export function WorkflowBuilderPage() {
     const base = validateBase()
     if (!base) return
     if (base.steps.length === 0) {
-      toast.error('Chưa có bước nào — thêm ít nhất 1 bước Gửi email trước khi bật')
+      toast.error('Chưa có node nào — thêm ít nhất 1 node Gửi email trước khi bật')
       return
     }
     if (!base.steps.some((s) => s.type === 'send_email')) {
-      toast.error('Cần ít nhất 1 bước Gửi email trước khi bật')
+      toast.error('Cần ít nhất 1 node Gửi email trước khi bật')
       return
     }
     setActivating(true)
@@ -291,7 +291,7 @@ export function WorkflowBuilderPage() {
     } finally {
       setActivating(false)
       // Tạo xong (kể cả enable fail) → về route edit để không tạo trùng lần sau
-      if (createdId) navigate(`/dashboard/email-workflows/${createdId}/edit`, { replace: true })
+      if (createdId) navigate(`/dashboard/flows/${createdId}/edit`, { replace: true })
     }
   }
 
@@ -342,7 +342,7 @@ export function WorkflowBuilderPage() {
   const activateBlocker = !draft.event_key
     ? 'Cần chọn sự kiện bắt đầu'
     : !draft.steps.some((s) => s.type === 'send_email')
-      ? 'Cần ít nhất 1 bước Gửi email'
+      ? 'Cần ít nhất 1 node Gửi email'
       : null
 
   // ── Starter card + thông tin mốc ngày (read-only) ─────────────────────────
@@ -428,7 +428,7 @@ export function WorkflowBuilderPage() {
         {/* Header floating: back + pill tên (bút chì sửa inline) + status */}
         <div className="absolute top-4 left-4 right-4 z-10 flex items-center gap-2 flex-wrap">
           <Link
-            to="/dashboard/email-workflows"
+            to="/dashboard/flows"
             aria-label="Về danh sách"
             className="p-2.5 rounded-full bg-white shadow-sm text-[#6B7280] hover:text-[#111827]"
           >
@@ -479,7 +479,7 @@ export function WorkflowBuilderPage() {
               )}
             </div>
           )}
-          {!isNew && <WorkflowStatusPill status={status} />}
+          {!isNew && <FlowStatusPill status={status} />}
           {dirty && (
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#FEF3C7] text-[#B45309]">
               Chưa lưu
@@ -500,7 +500,7 @@ export function WorkflowBuilderPage() {
             </div>
           )}
 
-          <WorkflowCanvas
+          <FlowCanvas
             starter={starter}
             steps={draft.steps}
             templates={templatesQ.data ?? []}
