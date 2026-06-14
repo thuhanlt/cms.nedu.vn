@@ -8,6 +8,8 @@ import {
   MessageSquare,
   Wallet,
   CalendarDays,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react'
 import type { CourseRealPreviewSection } from '../preview/CourseRealPreview'
 
@@ -60,13 +62,31 @@ export function navToHighlight(key: CourseSectionKey): CourseRealPreviewSection 
 interface Props {
   current: CourseSectionKey
   onChange: (key: CourseSectionKey) => void
+  /** Thu gọn về chỉ-icon. Width do parent điều khiển. */
+  collapsed?: boolean
+  onToggleCollapse?: () => void
 }
 
-export function CourseSectionNav({ current, onChange }: Props) {
+export function CourseSectionNav({ current, onChange, collapsed = false, onToggleCollapse }: Props) {
   return (
-    <aside className="w-[220px] shrink-0 border-r border-[#E5E7EB] bg-white overflow-y-auto">
-      <div className="px-4 py-3 text-[11px] uppercase tracking-wider text-[#6B7280] font-semibold border-b border-[#E5E7EB]">
-        Trang khoá học
+    <aside className="h-full w-full bg-white overflow-y-auto overflow-x-hidden">
+      <div
+        className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} px-3 py-3 border-b border-[#E5E7EB]`}
+      >
+        {!collapsed && (
+          <span className="text-[11px] uppercase tracking-wider text-[#6B7280] font-semibold whitespace-nowrap">
+            Trang khoá học
+          </span>
+        )}
+        {onToggleCollapse && (
+          <button
+            onClick={onToggleCollapse}
+            className="p-1 rounded text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#111827] transition shrink-0"
+            title={collapsed ? 'Mở rộng menu' : 'Thu gọn menu'}
+          >
+            {collapsed ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
+          </button>
+        )}
       </div>
       <nav className="py-2">
         {SECTIONS.map((s) => {
@@ -76,15 +96,20 @@ export function CourseSectionNav({ current, onChange }: Props) {
             <button
               key={s.key}
               onClick={() => onChange(s.key)}
-              className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition border-l-2 ${
+              title={collapsed ? `${s.num} · ${s.label}` : undefined}
+              className={`w-full flex items-center py-2.5 text-sm text-left transition border-l-2 ${
+                collapsed ? 'justify-center px-0' : 'gap-2.5 px-4'
+              } ${
                 active
                   ? 'bg-[#E0EFF5] text-[#1F5374] border-[#2D6A8C] font-medium'
                   : 'text-[#374151] hover:bg-[#F7F8FA] border-transparent'
               }`}
             >
-              <span className="text-[10px] font-semibold text-[#9CA3AF] tabular-nums shrink-0">{s.num}</span>
-              <Icon size={14} />
-              <span className="flex-1">{s.label}</span>
+              {!collapsed && (
+                <span className="text-[10px] font-semibold text-[#9CA3AF] tabular-nums shrink-0">{s.num}</span>
+              )}
+              <Icon size={collapsed ? 16 : 14} className="shrink-0" />
+              {!collapsed && <span className="flex-1 whitespace-nowrap">{s.label}</span>}
             </button>
           )
         })}
