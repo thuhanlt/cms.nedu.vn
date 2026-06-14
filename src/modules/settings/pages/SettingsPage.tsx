@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { Skeleton } from '@shared/components/Skeleton'
-import { EmptyState } from '@shared/components/EmptyState'
 import { SaveButton, type SaveState } from '@shared/components/SaveButton'
 import { toast } from '@shared/stores/useToastStore'
 import { useSiteSettings, useUpdateSiteSettings } from '../hooks/useSiteSettings'
@@ -24,6 +23,30 @@ function safeDate(iso?: string): string {
 }
 
 export function SettingsPage() {
+  return (
+    <div className="p-6 max-w-3xl mx-auto">
+      <header className="mb-5">
+        <h1 className="text-2xl font-semibold text-[#111827]" style={{ fontFamily: 'Playfair Display, serif' }}>
+          Cài đặt site
+        </h1>
+        <p className="text-sm text-[#6B7280] mt-1">
+          Nội dung hiển thị trên nedu.vn. Mỗi mục dưới đây tải và lưu độc lập.
+        </p>
+      </header>
+
+      <div className="space-y-5">
+        <HeroSettingsSection />
+        <CompanyInfoSection />
+      </div>
+    </div>
+  )
+}
+
+// Thống kê & Hero + CTA/Playlist — chung 1 SiteSettings, lưu chung. Tách thành
+// component tự-chứa: lỗi tải mục này KHÔNG chặn mục "Thông tin doanh nghiệp"
+// (vd backend chưa có endpoint /site-settings → mục này báo lỗi cục bộ, các
+// mục khác vẫn dùng được).
+function HeroSettingsSection() {
   const { data: original, isLoading, isError, refetch } = useSiteSettings()
   const update = useUpdateSiteSettings()
   const [draft, setDraft] = useState<SiteSettings | null>(null)
@@ -61,56 +84,36 @@ export function SettingsPage() {
 
   if (isError) {
     return (
-      <div className="p-6 max-w-3xl mx-auto">
-        <div className="bg-white rounded-xl border border-[#E5E7EB]">
-          <EmptyState
-            title="Không tải được cài đặt"
-            description="Có thể do mất mạng hoặc quyền admin chưa được cấp."
-            action={
-              <button
-                onClick={() => refetch()}
-                className="px-4 py-2 rounded-lg bg-[#2D6A8C] hover:bg-[#1F5374] text-white text-sm font-medium"
-              >
-                Thử lại
-              </button>
-            }
-          />
+      <Section title="Thống kê & Hero" description="Số liệu hiển thị ở hero trang chủ + nội dung headline.">
+        <div className="px-3 py-3 rounded-md bg-[#FEF2F2] text-[#B91C1C] text-sm flex items-center justify-between gap-3">
+          <span>Chưa tải được mục này (backend chưa có endpoint cài đặt Hero).</span>
+          <button
+            onClick={() => refetch()}
+            className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-[#2D6A8C] hover:bg-[#1F5374] text-white text-xs font-medium"
+          >
+            Thử lại
+          </button>
         </div>
-      </div>
+      </Section>
     )
   }
 
   if (isLoading || !draft) {
     return (
-      <div className="p-6 max-w-3xl mx-auto space-y-4">
-        <Skeleton height={32} width={200} />
+      <Section title="Thống kê & Hero" description="Số liệu hiển thị ở hero trang chủ + nội dung headline.">
         <Skeleton height={200} />
-        <Skeleton height={160} />
-      </div>
+      </Section>
     )
   }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <header className="flex items-start justify-between gap-4 mb-5">
-        <div>
-          <h1 className="text-2xl font-semibold text-[#111827]" style={{ fontFamily: 'Playfair Display, serif' }}>
-            Cài đặt site
-          </h1>
-          <p className="text-sm text-[#6B7280] mt-1">
-            Nội dung hiển thị trên nedu.vn (thống kê + hero + CTA). Cập nhật lần cuối: {safeDate(draft.updatedAt)}
-          </p>
-        </div>
+    <div className="space-y-5">
+      <div className="flex items-center justify-end gap-3">
+        <span className="text-xs text-[#9CA3AF]">Cập nhật lần cuối: {safeDate(draft.updatedAt)}</span>
+        {dirty && <span className="text-xs text-[#B45309]">· Chưa lưu</span>}
         <SaveButton state={saveState} onClick={onSave} savedAt={savedAt} label="Lưu cài đặt" />
-      </header>
+      </div>
 
-      {dirty && (
-        <div className="mb-4 px-3 py-2 rounded-md bg-[#FEF3C7] text-[#B45309] text-xs">
-          Có thay đổi chưa lưu — đừng quên bấm "Lưu cài đặt".
-        </div>
-      )}
-
-      <div className="space-y-5">
         {/* Thống kê & Hero */}
         <Section title="Thống kê & Hero" description="Số liệu hiển thị ở hero trang chủ + nội dung headline.">
           <div className="grid grid-cols-2 gap-4">
@@ -192,10 +195,6 @@ export function SettingsPage() {
             />
           </Field>
         </Section>
-
-        {/* Thông tin doanh nghiệp — config riêng, lưu độc lập */}
-        <CompanyInfoSection />
-      </div>
     </div>
   )
 }
