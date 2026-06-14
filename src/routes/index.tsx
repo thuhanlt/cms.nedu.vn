@@ -28,6 +28,7 @@ const EmailTemplateListPage = lazy(() => import('@modules/email-templates/pages/
 const EmailTemplateEditorPage = lazy(() => import('@modules/email-templates/pages/EmailTemplateEditorPage').then((m) => ({ default: m.EmailTemplateEditorPage })))
 const FlowsListPage = lazy(() => import('@modules/flows/pages/FlowsListPage').then((m) => ({ default: m.FlowsListPage })))
 const FlowBuilderPage = lazy(() => import('@modules/flows/pages/FlowBuilderPage').then((m) => ({ default: m.FlowBuilderPage })))
+const EmailDeliveriesPage = lazy(() => import('@modules/email-deliveries/pages/EmailDeliveriesPage').then((m) => ({ default: m.EmailDeliveriesPage })))
 
 function PageFallback() {
   return (
@@ -73,6 +74,7 @@ export function AppRouter() {
                   <Route path="flows" element={<FlowsListPage />} />
                   <Route path="flows/new" element={<FlowBuilderPage />} />
                   <Route path="flows/:id/edit" element={<FlowBuilderPage />} />
+                  <Route path="flows-history" element={<EmailDeliveriesPage />} />
                 </Route>
               </Route>
             </Route>
