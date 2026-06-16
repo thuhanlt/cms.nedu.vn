@@ -1,5 +1,6 @@
 import { env } from './env'
 import { tokenStorage, type TokenPair } from './token-storage'
+import { scheduleProactiveRefresh, cancelProactiveRefresh } from './proactive-refresh'
 
 const base = () => env.VITE_AUTH_CENTRAL_URL.replace(/\/$/, '')
 
@@ -32,17 +33,22 @@ export function refreshTokens(): Promise<string | null> {
       })
       if (!res.ok) {
         tokenStorage.clear()
+        cancelProactiveRefresh()
         return null
       }
       const body = (await res.json()) as Partial<TokenPair>
       if (!body.access_token || !body.refresh_token) {
         tokenStorage.clear()
+        cancelProactiveRefresh()
         return null
       }
       tokenStorage.set({ access_token: body.access_token, refresh_token: body.refresh_token })
+      // Re-schedule dựa trên token mới (TTL reset). Idempotent.
+      scheduleProactiveRefresh()
       return body.access_token
     } catch {
       tokenStorage.clear()
+      cancelProactiveRefresh()
       return null
     } finally {
       inflight = null
@@ -64,5 +70,6 @@ export async function logout(): Promise<void> {
     /* swallow — vẫn clear local */
   } finally {
     tokenStorage.clear()
+    cancelProactiveRefresh()
   }
 }

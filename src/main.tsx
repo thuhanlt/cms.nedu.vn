@@ -5,6 +5,8 @@ import { enableMocking } from './mocks/init'
 import { analytics } from './shared/analytics'
 import { AppRouter } from './routes'
 import { ErrorBoundary } from './shared/components/ErrorBoundary'
+import { refreshTokens } from './shared/config/auth-central-client'
+import { scheduleProactiveRefresh, setRefreshFn } from './shared/config/proactive-refresh'
 
 const rootEl = document.getElementById('root')!
 
@@ -39,6 +41,12 @@ async function bootstrap() {
   try {
     await enableMocking()
     analytics.init()
+    // Wire proactive refresh: inject refreshTokens (tránh circular import) +
+    // schedule rotation nếu reload page khi đã có token. Token đã expired →
+    // schedule fire ngay, refreshTokens() recover trước khi user thấy 401.
+    // No-op ở mock mode (không có nlh_access_token).
+    setRefreshFn(refreshTokens)
+    scheduleProactiveRefresh()
     renderApp(root)
   } catch (err) {
     renderBootstrapError(err)

@@ -3,6 +3,7 @@ import { api } from '@shared/config/api-client'
 import { IS_MOCK } from '@shared/config/env'
 import { tokenStorage, type TokenPair } from '@shared/config/token-storage'
 import { redirectToGoogleLogin, logout as authCentralLogout } from '@shared/config/auth-central-client'
+import { scheduleProactiveRefresh, cancelProactiveRefresh } from '@shared/config/proactive-refresh'
 import { onAuthExpired } from '@shared/config/api-client'
 import type { AuthUser } from '@shared/types'
 
@@ -35,6 +36,7 @@ async function fetchMe(): Promise<AuthUser | null> {
 export const useAuthStore = create<AuthState>((set, get) => {
   onAuthExpired(() => {
     tokenStorage.clear()
+    cancelProactiveRefresh()
     set({ user: null, isLoading: false })
     if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
       window.location.assign('/login')
@@ -82,6 +84,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
     acceptTokens: async (tokens) => {
       tokenStorage.set(tokens)
+      scheduleProactiveRefresh()
       set({ isLoading: true })
       const user = await fetchMe()
       set({ user, isLoading: false, initialized: true })
@@ -101,6 +104,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
         if (typeof window !== 'undefined') localStorage.removeItem('mock_uid')
       }
       tokenStorage.clear()
+      cancelProactiveRefresh()
       set({ user: null, isLoading: false })
       if (typeof window !== 'undefined') window.location.assign('/login')
     },
